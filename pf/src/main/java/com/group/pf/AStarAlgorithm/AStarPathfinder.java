@@ -62,24 +62,19 @@ public class AStarPathfinder {
         Collections.reverse(path);
         return path;
     }
-    public double calculateGScore(Node parent, Node current) {
+    private double calculateGScore(Node parent, Node current) {
         // Calculate and return the gScore based on the parent node and current node
         double distance = distance(parent, current);
         return parent.getGScore() + distance;
     }
 
-    public double calculateFScore(Node current, Node goal) {
-        // Calculate and return the fScore based on the current node and goal node
-        return calculateGScore(current.getParent(), current) + calculateHScore(current, goal);
-    }
-
-    public double calculateHScore(Node current, Node goal) {
+    private double calculateHScore(Node current, Node goal) {
         // Calculate and return the hScore based on the current node and goal node
         int dx = Math.abs(current.getX() - goal.getX());
         int dy = Math.abs(current.getY() - goal.getY());
         return Math.sqrt(dx * dx + dy * dy);
     }
-    public double distance(Node node1, Node node2) {
+    private double distance(Node node1, Node node2) {
         // Calculate and return the distance between two nodes
         int dx = Math.abs(node1.getX() - node2.getX());
         int dy = Math.abs(node1.getY() - node2.getY());
