@@ -50,8 +50,7 @@ public class AStarPathfinder {
                 }
             }
         }
-
-        return null; // No path found
+        return Collections.emptyList();
     }
     private List<Node> reconstructPath(Node currentNode) {
         List<Node> path = new ArrayList<>();

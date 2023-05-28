@@ -37,8 +37,7 @@ public class BreadthFirstPathfinder {
                 }
             }
         }
-        System.out.println(visited);
-        return null;
+        return Collections.emptyList();
     }
     private List<Node> reconstructPath(Map<Node, Node> parents) {
         List<Node> path = new ArrayList<>();
