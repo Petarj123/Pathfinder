@@ -1,37 +1,32 @@
 package com.group.pf;
 
-import com.group.pf.AStarAlgorithm.AStarPathfinder;
-import com.group.pf.AStarAlgorithm.Grid;
-import com.group.pf.AStarAlgorithm.Node;
+
+import com.group.pf.BreadthFirstAlgorithm.BreadthFirstPathfinder;
+import com.group.pf.BreadthFirstAlgorithm.Grid;
+import com.group.pf.BreadthFirstAlgorithm.Node;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-public class AStarTest {
-    @Test
-    void testFindPath() {
-        // Create a grid
-        Grid grid = new Grid(50, 50);
+public class BreadthFirstTest {
 
-        // Set the start and end nodes
+    @Test
+    void test() {
+        Grid grid = new Grid(50, 50);
         Node startNode = grid.getNode(0, 0);
         Node endNode = grid.getNode(49, 49);
         startNode.setStart(true);
         endNode.setEnd(true);
 
-        // Set random obstacles in the grid
-        setRandomObstacles(grid, 200);
+        setRandomObstacles(grid, 500);
 
-        // Create the A* pathfinder
-        AStarPathfinder pathfinder = new AStarPathfinder(grid, startNode, endNode);
+        BreadthFirstPathfinder pathfinder = new BreadthFirstPathfinder(grid, startNode, endNode);
 
-        // Find the path
         List<Node> path = pathfinder.findPath();
-
-        // Print the grid
+        System.out.println(path);
         printGrid(grid, path);
-
     }
+
     private void setRandomObstacles(Grid grid, int numObstacles) {
         int count = 0;
         while (count < numObstacles) {
@@ -44,6 +39,7 @@ public class AStarTest {
             }
         }
     }
+
     private void printGrid(Grid grid, List<Node> path) {
         for (int y = 0; y < grid.getHeight(); y++) {
             for (int x = 0; x < grid.getWidth(); x++) {

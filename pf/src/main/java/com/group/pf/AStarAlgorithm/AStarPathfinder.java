@@ -59,6 +59,9 @@ public class AStarPathfinder {
             path.add(currentNode);
             currentNode = currentNode.getParent();
         }
+        for (Node node : path) {
+            node.setPath(true);
+        }
         Collections.reverse(path);
         return path;
     }
