@@ -1,42 +1,22 @@
 package com.group.pf;
 
-import com.group.pf.DijkstraAlgorithm.DijkstraPathfinder;
-import com.group.pf.DijkstraAlgorithm.Grid;
-import com.group.pf.DijkstraAlgorithm.Node;
-import com.group.pf.Swarm.BiDirectionalSwarmPathfinder;
 import com.group.pf.Swarm.ConvergentSwarmPathfinder;
+import com.group.pf.Swarm.Grid;
+import com.group.pf.Swarm.Node;
 import org.junit.jupiter.api.Test;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
-public class DijkstraTest {
+public class SwarmTest {
     @Test
-    void testDijkstra(){
+    void convergentSwarm(){
         Grid grid = new Grid(10, 10);
         Node startNode = grid.getNode(0, 0);
         Node endNode = grid.getNode(9, 9);
         startNode.setStart(true);
         endNode.setEnd(true);
-
         setRandomObstacles(grid, 20);
-
-        DijkstraPathfinder pathfinder = new DijkstraPathfinder(grid, startNode, endNode);
-        List<Node> path = pathfinder.findPath();
-        printGrid(grid, path);
-    }
-    @Test
-    void biDirectionalSwarm(){
-        Grid grid = new Grid(10, 10);
-        Node startNode = grid.getNode(0, 0);
-        Node endNode = grid.getNode(9, 9);
-        startNode.setStart(true);
-        endNode.setEnd(true);
-
-        setRandomObstacles(grid, 20);
-
-        BiDirectionalSwarmPathfinder pathfinder = new BiDirectionalSwarmPathfinder(grid, startNode, endNode);
+        ConvergentSwarmPathfinder pathfinder = new ConvergentSwarmPathfinder(grid, startNode, endNode);
         List<Node> path = pathfinder.findPath();
         printGrid(grid, path);
     }
