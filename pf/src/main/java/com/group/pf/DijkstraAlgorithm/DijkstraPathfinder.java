@@ -1,5 +1,7 @@
 package com.group.pf.DijkstraAlgorithm;
 
+import com.group.pf.testPackage.Grid;
+import com.group.pf.testPackage.Node;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.stereotype.Component;
@@ -10,29 +12,30 @@ import java.util.*;
 @Data
 @AllArgsConstructor
 public class DijkstraPathfinder {
-    private Grid grid;
-    private Node startNode;
-    private Node endNode;
+    private Grid<DijkstraNode> grid;
+    private DijkstraNode startDijkstraNode;
+    private DijkstraNode endDijkstraNode;
 
-    public List<Node> findPath() {
-        PriorityQueue<Node> queue = new PriorityQueue<>();
-        Set<Node> visited = new HashSet<>();
+    public List<DijkstraNode> findPath() {
+        PriorityQueue<DijkstraNode> queue = new PriorityQueue<>();
+        Set<DijkstraNode> visited = new HashSet<>();
 
-        startNode.setDistance(0);
-        queue.offer(startNode);
+        startDijkstraNode.setDistance(0);
+        queue.offer(startDijkstraNode);
 
         while (!queue.isEmpty()) {
-            Node currentNode = queue.poll();
-            if (currentNode == endNode) {
+            DijkstraNode currentDijkstraNode = queue.poll();
+            if (currentDijkstraNode == endDijkstraNode) {
                 return reconstructPath();
             }
-            visited.add(currentNode);
-            for (Node neighbor : currentNode.getNeighbours(grid)){
+            visited.add(currentDijkstraNode);
+            for (Node neighborNodes : currentDijkstraNode.getNeighbors(grid)){
+                DijkstraNode neighbor = (DijkstraNode) neighborNodes;
                 if (!visited.contains(neighbor) && !neighbor.isObstacle()){
-                    int distance = currentNode.getDistance() + 1; // Assuming all edges have weight 1
+                    int distance = currentDijkstraNode.getDistance() + 1; // Assuming all edges have weight 1
                     if (distance < neighbor.getDistance()){
                         neighbor.setDistance(distance);
-                        neighbor.setPrevious(currentNode);
+                        neighbor.setPrevious(currentDijkstraNode);
                         queue.offer(neighbor);
                     }
                 }
@@ -41,16 +44,16 @@ public class DijkstraPathfinder {
         return Collections.emptyList();
     }
 
-    private List<Node> reconstructPath() {
-        List<Node> path = new ArrayList<>();
-        Node current = endNode;
+    private List<DijkstraNode> reconstructPath() {
+        List<DijkstraNode> path = new ArrayList<>();
+        DijkstraNode current = endDijkstraNode;
 
         while (current != null) {
             path.add(current);
-            current = current.getPrevious();
+            current = (DijkstraNode) current.getPrevious();
         }
-        for (Node node : path) {
-            node.setPath(true);
+        for (DijkstraNode dijkstraNode : path) {
+            dijkstraNode.setPath(true);
         }
         Collections.reverse(path);
         return path;

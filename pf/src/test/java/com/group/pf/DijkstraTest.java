@@ -1,68 +1,51 @@
 package com.group.pf;
 
+import com.group.pf.DijkstraAlgorithm.DijkstraNode;
 import com.group.pf.DijkstraAlgorithm.DijkstraPathfinder;
-import com.group.pf.DijkstraAlgorithm.Grid;
-import com.group.pf.DijkstraAlgorithm.Node;
-import com.group.pf.Swarm.BiDirectionalSwarmPathfinder;
-import com.group.pf.Swarm.ConvergentSwarmPathfinder;
+import com.group.pf.Swarm.SwarmNode;
+import com.group.pf.testPackage.Grid;
 import org.junit.jupiter.api.Test;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
 public class DijkstraTest {
+
     @Test
-    void testDijkstra(){
-        Grid grid = new Grid(10, 10);
-        Node startNode = grid.getNode(0, 0);
-        Node endNode = grid.getNode(9, 9);
+    void dijkstraTest(){
+        Grid<DijkstraNode> grid = new Grid<>(10, 10, DijkstraNode.class);
+        DijkstraNode startNode = grid.getNode(0, 0);
+        DijkstraNode endNode = grid.getNode(9, 9);
         startNode.setStart(true);
         endNode.setEnd(true);
-
-        setRandomObstacles(grid, 20);
-
-        DijkstraPathfinder pathfinder = new DijkstraPathfinder(grid, startNode, endNode);
-        List<Node> path = pathfinder.findPath();
+        setRandomObstacles(grid, 10);
+        DijkstraPathfinder dijkstra = new DijkstraPathfinder(grid, startNode, endNode);
+        List<DijkstraNode> path = dijkstra.findPath();
         printGrid(grid, path);
     }
-    @Test
-    void biDirectionalSwarm(){
-        Grid grid = new Grid(10, 10);
-        Node startNode = grid.getNode(0, 0);
-        Node endNode = grid.getNode(9, 9);
-        startNode.setStart(true);
-        endNode.setEnd(true);
 
-        setRandomObstacles(grid, 20);
-
-        BiDirectionalSwarmPathfinder pathfinder = new BiDirectionalSwarmPathfinder(grid, startNode, endNode);
-        List<Node> path = pathfinder.findPath();
-        printGrid(grid, path);
-    }
-    private void setRandomObstacles(Grid grid, int numObstacles) {
+    private void setRandomObstacles(Grid<DijkstraNode> grid, int numObstacles) {
         int count = 0;
         while (count < numObstacles) {
             int x = (int) (Math.random() * grid.getWidth());
             int y = (int) (Math.random() * grid.getHeight());
-            Node node = grid.getNode(x, y);
-            if (!node.isStart() && !node.isEnd() && !node.isObstacle()) {
-                node.setObstacle(true);
+            DijkstraNode swarmNode = grid.getNode(x, y);
+            if (!swarmNode.isStart() && !swarmNode.isEnd() && !swarmNode.isObstacle()) {
+                swarmNode.setObstacle(true);
                 count++;
             }
         }
     }
-    private void printGrid(Grid grid, List<Node> path) {
+    private void printGrid(Grid<DijkstraNode> grid, List<DijkstraNode> path) {
         for (int y = 0; y < grid.getHeight(); y++) {
             for (int x = 0; x < grid.getWidth(); x++) {
-                Node node = grid.getNode(x, y);
-                if (node.isStart()) {
+                DijkstraNode swarmNode = grid.getNode(x, y);
+                if (swarmNode.isStart()) {
                     System.out.print("1 ");
-                } else if (node.isEnd()) {
+                } else if (swarmNode.isEnd()) {
                     System.out.print("2 ");
-                } else if (node.isObstacle()) {
+                } else if (swarmNode.isObstacle()) {
                     System.out.print("- ");
-                } else if (node.isPath()) {
+                } else if (swarmNode.isPath()) {
                     System.out.print("* ");
                 } else {
                     System.out.print("4 ");

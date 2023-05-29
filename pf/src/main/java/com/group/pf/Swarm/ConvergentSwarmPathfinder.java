@@ -1,5 +1,7 @@
 package com.group.pf.Swarm;
 
+import com.group.pf.testPackage.Grid;
+import com.group.pf.testPackage.Node;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.stereotype.Component;
@@ -12,33 +14,33 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class ConvergentSwarmPathfinder {
-    private Grid grid;
-    private Node startNode;
-    private Node endNode;
+    private Grid<SwarmNode> grid;
+    private SwarmNode startSwarmNode;
+    private SwarmNode endSwarmNode;
 
-    public List<Node> findPath() {
-        List<Node> path = new ArrayList<>();
+    public List<SwarmNode> findPath() {
+        List<SwarmNode> path = new ArrayList<>();
 
         // Create the forward swarm from the start node
-        List<Node> forwardSwarm = new ArrayList<>();
-        forwardSwarm.add(startNode);
+        List<SwarmNode> forwardSwarm = new ArrayList<>();
+        forwardSwarm.add(startSwarmNode);
 
         // Create the backward swarm from the end node
-        List<Node> backwardSwarm = new ArrayList<>();
-        backwardSwarm.add(endNode);
+        List<SwarmNode> backwardSwarm = new ArrayList<>();
+        backwardSwarm.add(endSwarmNode);
 
         // Initialize convergence flag
         boolean isConverged = false;
 
         while (!isConverged) {
             // Move the forward swarm towards the backward swarm
-            for (Node node : forwardSwarm) {
-                // Move the node towards the neighboring node with the lowest distance from the end node
-                Node nextNode = getNeighborWithLowestDistanceToEnd(node);
-                if (nextNode != null) {
-                    node.setPrevious(nextNode);
-                    node.setPath(true);
-                    if (backwardSwarm.contains(nextNode)) {
+            for (SwarmNode swarmNode : forwardSwarm) {
+                // Move the swarmNode towards the neighboring swarmNode with the lowest distance from the end swarmNode
+                SwarmNode nextSwarmNode = getNeighborWithLowestDistanceToEnd(swarmNode);
+                if (nextSwarmNode != null) {
+                    swarmNode.setPrevious(nextSwarmNode);
+                    swarmNode.setPath(true);
+                    if (backwardSwarm.contains(nextSwarmNode)) {
                         // The forward swarm has met the backward swarm, convergence reached
                         isConverged = true;
                         break;
@@ -47,13 +49,13 @@ public class ConvergentSwarmPathfinder {
             }
 
             // Move the backward swarm towards the forward swarm
-            for (Node node : backwardSwarm) {
-                // Move the node towards the neighboring node with the lowest distance from the start node
-                Node nextNode = getNeighborWithLowestDistanceToStart(node);
-                if (nextNode != null) {
-                    node.setPrevious(nextNode);
-                    node.setPath(true);
-                    if (forwardSwarm.contains(nextNode)) {
+            for (SwarmNode swarmNode : backwardSwarm) {
+                // Move the swarmNode towards the neighboring swarmNode with the lowest distance from the start swarmNode
+                SwarmNode nextSwarmNode = getNeighborWithLowestDistanceToStart(swarmNode);
+                if (nextSwarmNode != null) {
+                    swarmNode.setPrevious(nextSwarmNode);
+                    swarmNode.setPath(true);
+                    if (forwardSwarm.contains(nextSwarmNode)) {
                         // The backward swarm has met the forward swarm, convergence reached
                         isConverged = true;
                         break;
@@ -63,9 +65,9 @@ public class ConvergentSwarmPathfinder {
         }
 
         // Combine the paths from the start node to the meeting point and from the end node to the meeting point
-        Node meetingPoint = findMeetingPoint(forwardSwarm, backwardSwarm);
-        List<Node> forwardPath = reconstructPath(startNode, meetingPoint);
-        List<Node> backwardPath = reconstructPath(endNode, meetingPoint);
+        SwarmNode meetingPoint = findMeetingPoint(forwardSwarm, backwardSwarm);
+        List<SwarmNode> forwardPath = reconstructPath(startSwarmNode, meetingPoint);
+        List<SwarmNode> backwardPath = reconstructPath(endSwarmNode, meetingPoint);
 
         // Combine the forward and backward paths
         path.addAll(forwardPath);
@@ -73,22 +75,23 @@ public class ConvergentSwarmPathfinder {
 
         return path;
     }
-    private Node findMeetingPoint(List<Node> forwardSwarm, List<Node> backwardSwarm) {
+    private SwarmNode findMeetingPoint(List<SwarmNode> forwardSwarm, List<SwarmNode> backwardSwarm) {
         // Find the first common node between the forward and backward swarms
-        for (Node forwardNode : forwardSwarm) {
-            if (backwardSwarm.contains(forwardNode)) {
-                return forwardNode;
+        for (SwarmNode forwardSwarmNode : forwardSwarm) {
+            if (backwardSwarm.contains(forwardSwarmNode)) {
+                return forwardSwarmNode;
             }
         }
         return null; // Meeting point not found
     }
 
-    private Node getNeighborWithLowestDistanceToStart(Node node) {
-        List<Node> neighbors = node.getNeighbours(grid);
-        Node neighborWithLowestDistance = null;
+    private SwarmNode getNeighborWithLowestDistanceToStart(SwarmNode swarmNode) {
+        List<Node> neighbors = swarmNode.getNeighbors(grid);
+        SwarmNode neighborWithLowestDistance = null;
         int lowestDistance = Integer.MAX_VALUE;
 
-        for (Node neighbor : neighbors) {
+        for (Node neighborNode : neighbors) {
+            SwarmNode neighbor = (SwarmNode) neighborNode;
             if (neighbor.getDistanceToStart() < lowestDistance) {
                 neighborWithLowestDistance = neighbor;
                 lowestDistance = neighbor.getDistanceToStart();
@@ -98,12 +101,13 @@ public class ConvergentSwarmPathfinder {
         return neighborWithLowestDistance;
     }
 
-    private Node getNeighborWithLowestDistanceToEnd(Node node) {
-        List<Node> neighbors = node.getNeighbours(grid);
-        Node neighborWithLowestDistance = null;
+    private SwarmNode getNeighborWithLowestDistanceToEnd(SwarmNode swarmNode) {
+        List<Node> neighbors = swarmNode.getNeighbors(grid);
+        SwarmNode neighborWithLowestDistance = null;
         int lowestDistance = Integer.MAX_VALUE;
 
-        for (Node neighbor : neighbors) {
+        for (Node neighborNode : neighbors) {
+            SwarmNode neighbor = (SwarmNode) neighborNode;
             if (neighbor.getDistanceToEnd() < lowestDistance) {
                 neighborWithLowestDistance = neighbor;
                 lowestDistance = neighbor.getDistanceToEnd();
@@ -113,24 +117,24 @@ public class ConvergentSwarmPathfinder {
         return neighborWithLowestDistance;
     }
 
-    private List<Node> reconstructPath(Node startNode, Node endNode) {
-        List<Node> path = new ArrayList<>();
-        Node current = endNode;
+    private List<SwarmNode> reconstructPath(SwarmNode startSwarmNode, SwarmNode endSwarmNode) {
+        List<SwarmNode> path = new ArrayList<>();
+        SwarmNode current = endSwarmNode;
 
-        while (current != null && current != startNode) {
+        while (current != null && current != startSwarmNode) {
             path.add(current);
-            current = current.getPrevious();
+            current = (SwarmNode) current.getPrevious();
         }
 
         // Add the start node to the path
-        if (current == startNode) {
-            path.add(startNode);
+        if (current == startSwarmNode) {
+            path.add(startSwarmNode);
         }
 
         // Reverse the path to get the correct order
         Collections.reverse(path);
-        for (Node node : path) {
-            node.setPath(true);
+        for (SwarmNode swarmNode : path) {
+            swarmNode.setPath(true);
         }
         return path;
     }

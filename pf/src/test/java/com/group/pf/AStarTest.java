@@ -1,8 +1,8 @@
 package com.group.pf;
 
 import com.group.pf.AStarAlgorithm.AStarPathfinder;
-import com.group.pf.AStarAlgorithm.Grid;
-import com.group.pf.AStarAlgorithm.Node;
+import com.group.pf.AStarAlgorithm.AStarNode;
+import com.group.pf.testPackage.Grid;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -11,50 +11,50 @@ public class AStarTest {
     @Test
     void testFindPath() {
         // Create a grid
-        Grid grid = new Grid(50, 50);
+        Grid<AStarNode> grid = new Grid<AStarNode>(50, 50, AStarNode.class);
 
         // Set the start and end nodes
-        Node startNode = grid.getNode(0, 0);
-        Node endNode = grid.getNode(49, 49);
-        startNode.setStart(true);
-        endNode.setEnd(true);
+        AStarNode startAStarNode = grid.getNode(0, 0);
+        AStarNode endAStarNode = grid.getNode(25, 40);
+        startAStarNode.setStart(true);
+        endAStarNode.setEnd(true);
 
         // Set random obstacles in the grid
         setRandomObstacles(grid, 200);
 
         // Create the A* pathfinder
-        AStarPathfinder pathfinder = new AStarPathfinder(grid, startNode, endNode);
+        AStarPathfinder pathfinder = new AStarPathfinder(grid, startAStarNode, endAStarNode);
 
         // Find the path
-        List<Node> path = pathfinder.findPath();
+        List<AStarNode> path = pathfinder.findPath();
 
         // Print the grid
         printGrid(grid, path);
 
     }
-    private void setRandomObstacles(Grid grid, int numObstacles) {
+    private void setRandomObstacles(Grid<AStarNode> grid, int numObstacles) {
         int count = 0;
         while (count < numObstacles) {
             int x = (int) (Math.random() * grid.getWidth());
             int y = (int) (Math.random() * grid.getHeight());
-            Node node = grid.getNode(x, y);
-            if (!node.isStart() && !node.isEnd() && !node.isObstacle()) {
-                node.setObstacle(true);
+            AStarNode AStarNode = grid.getNode(x, y);
+            if (!AStarNode.isStart() && !AStarNode.isEnd() && !AStarNode.isObstacle()) {
+                AStarNode.setObstacle(true);
                 count++;
             }
         }
     }
-    private void printGrid(Grid grid, List<Node> path) {
+    private void printGrid(Grid<AStarNode> grid, List<AStarNode> path) {
         for (int y = 0; y < grid.getHeight(); y++) {
             for (int x = 0; x < grid.getWidth(); x++) {
-                Node node = grid.getNode(x, y);
-                if (node.isStart()) {
+                AStarNode AStarNode = grid.getNode(x, y);
+                if (AStarNode.isStart()) {
                     System.out.print("1 ");
-                } else if (node.isEnd()) {
+                } else if (AStarNode.isEnd()) {
                     System.out.print("2 ");
-                } else if (node.isObstacle()) {
+                } else if (AStarNode.isObstacle()) {
                     System.out.print("- ");
-                } else if (node.isPath()) {
+                } else if (AStarNode.isPath()) {
                     System.out.print("* ");
                 } else {
                     System.out.print("4 ");
