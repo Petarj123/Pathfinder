@@ -14,6 +14,7 @@ public class Node {
     private boolean isEnd;
     private boolean isObstacle;
     private boolean isPath;
+    private Node previous;
 
     public Node(int x, int y){
         this.x = x;

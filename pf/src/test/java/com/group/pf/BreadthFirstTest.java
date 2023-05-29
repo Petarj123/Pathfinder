@@ -2,6 +2,7 @@ package com.group.pf;
 
 
 import com.group.pf.BreadthFirstAlgorithm.BreadthFirstPathfinder;
+import com.group.pf.BreadthFirstAlgorithm.DepthFirstPathfinder;
 import com.group.pf.BreadthFirstAlgorithm.Grid;
 import com.group.pf.BreadthFirstAlgorithm.Node;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,22 @@ public class BreadthFirstTest {
         setRandomObstacles(grid, 500);
 
         BreadthFirstPathfinder pathfinder = new BreadthFirstPathfinder(grid, startNode, endNode);
+
+        List<Node> path = pathfinder.findPath();
+        System.out.println(path);
+        printGrid(grid, path);
+    }
+    @Test
+    void test1() {
+        Grid grid = new Grid(10, 10);
+        Node startNode = grid.getNode(0, 0);
+        Node endNode = grid.getNode(9, 9);
+        startNode.setStart(true);
+        endNode.setEnd(true);
+
+        setRandomObstacles(grid, 20);
+
+        DepthFirstPathfinder pathfinder = new DepthFirstPathfinder(grid, startNode, endNode);
 
         List<Node> path = pathfinder.findPath();
         System.out.println(path);
