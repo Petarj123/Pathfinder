@@ -1,5 +1,7 @@
 package com.group.pf.AStarAlgorithm;
 
+import com.group.pf.testPackage.Grid;
+import com.group.pf.testPackage.Node;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.stereotype.Component;
@@ -10,38 +12,39 @@ import java.util.*;
 @AllArgsConstructor
 public class AStarPathfinder {
     private Grid grid;
-    private Node startNode;
-    private Node endNode;
+    private AStarNode startAStarNode;
+    private AStarNode endAStarNode;
 
-    public List<Node> findPath() {
-        PriorityQueue<Node> openSet = new PriorityQueue<>(Comparator.comparingDouble(Node::getFScore));
-        Set<Node> closedSet = new HashSet<>();
+    public List<AStarNode> findPath() {
+        PriorityQueue<AStarNode> openSet = new PriorityQueue<>(Comparator.comparingDouble(AStarNode::getFScore));
+        Set<AStarNode> closedSet = new HashSet<>();
 
-        startNode.setGScore(0);
-        startNode.setHScore(calculateHScore(startNode, endNode));
-        startNode.setFScore(startNode.getGScore() + startNode.getHScore());
-        openSet.add(startNode);
+        startAStarNode.setGScore(0);
+        startAStarNode.setHScore(calculateHScore(startAStarNode, endAStarNode));
+        startAStarNode.setFScore(startAStarNode.getGScore() + startAStarNode.getHScore());
+        openSet.add(startAStarNode);
 
         while (!openSet.isEmpty()) {
-            Node currentNode = openSet.poll();
+            AStarNode currentAStarNode = openSet.poll();
 
-            if (currentNode == endNode) {
-                return reconstructPath(currentNode);
+            if (currentAStarNode == endAStarNode) {
+                return reconstructPath(currentAStarNode);
             }
 
-            closedSet.add(currentNode);
+            closedSet.add(currentAStarNode);
 
-            for (Node neighbor : currentNode.getNeighbors(grid)) {
+            for (Node neighborNode : currentAStarNode.getNeighbors(grid)) {
+                AStarNode neighbor = (AStarNode) neighborNode;
                 if (closedSet.contains(neighbor) || neighbor.isObstacle()) {
                     continue;
                 }
 
-                double tentativeGScore = currentNode.getGScore() + calculateGScore(currentNode, neighbor);
+                double tentativeGScore = currentAStarNode.getGScore() + calculateGScore(currentAStarNode, neighbor);
 
                 if (!openSet.contains(neighbor) || tentativeGScore < neighbor.getGScore()) {
-                    neighbor.setParent(currentNode);
+                    neighbor.setParent(currentAStarNode);
                     neighbor.setGScore(tentativeGScore);
-                    neighbor.setHScore(calculateHScore(neighbor, endNode));
+                    neighbor.setHScore(calculateHScore(neighbor, endAStarNode));
                     neighbor.setFScore(neighbor.getGScore() + neighbor.getHScore());
 
                     if (!openSet.contains(neighbor)) {
@@ -52,34 +55,34 @@ public class AStarPathfinder {
         }
         return Collections.emptyList();
     }
-    private List<Node> reconstructPath(Node currentNode) {
-        List<Node> path = new ArrayList<>();
-        while (currentNode != null) {
-            path.add(currentNode);
-            currentNode = currentNode.getParent();
+    private List<AStarNode> reconstructPath(AStarNode currentAStarNode) {
+        List<AStarNode> path = new ArrayList<>();
+        while (currentAStarNode != null) {
+            path.add(currentAStarNode);
+            currentAStarNode = currentAStarNode.getParent();
         }
-        for (Node node : path) {
-            node.setPath(true);
+        for (AStarNode AStarNode : path) {
+            AStarNode.setPath(true);
         }
         Collections.reverse(path);
         return path;
     }
-    private double calculateGScore(Node parent, Node current) {
+    private double calculateGScore(AStarNode parent, AStarNode current) {
         // Calculate and return the gScore based on the parent node and current node
         double distance = distance(parent, current);
         return parent.getGScore() + distance;
     }
 
-    private double calculateHScore(Node current, Node goal) {
+    private double calculateHScore(AStarNode current, AStarNode goal) {
         // Calculate and return the hScore based on the current node and goal node
         int dx = Math.abs(current.getX() - goal.getX());
         int dy = Math.abs(current.getY() - goal.getY());
         return Math.sqrt(dx * dx + dy * dy);
     }
-    private double distance(Node node1, Node node2) {
+    private double distance(AStarNode AStarNode1, AStarNode AStarNode2) {
         // Calculate and return the distance between two nodes
-        int dx = Math.abs(node1.getX() - node2.getX());
-        int dy = Math.abs(node1.getY() - node2.getY());
+        int dx = Math.abs(AStarNode1.getX() - AStarNode2.getX());
+        int dy = Math.abs(AStarNode1.getY() - AStarNode2.getY());
         return Math.sqrt(dx * dx + dy * dy);
     }
 }
