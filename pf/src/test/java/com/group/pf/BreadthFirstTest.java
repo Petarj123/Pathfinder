@@ -35,14 +35,27 @@ public class BreadthFirstTest {
         startNode.setStart(true);
         endNode.setEnd(true);
 
-        setRandomObstacles(grid, 20);
+        setRandomObstacles(grid, 40);
 
         DepthFirstPathfinder pathfinder = new DepthFirstPathfinder(grid, startNode, endNode);
 
         List<Node> path = pathfinder.findPath();
-        System.out.println(path);
         printGrid(grid, path);
     }
+    @Test
+    void test3() {
+        Grid grid = new Grid(10, 10);
+        grid.setObstacle(0, 0, true);
+        for (int x = 0; x < grid.getWidth(); x++) {
+            for (int y = 0; y < grid.getHeight(); y++) {
+                Node node = grid.getNode(x, y);
+                if (node.isObstacle()) {
+                    System.out.println(node);
+                }
+            }
+        }
+    }
+
 
     private void setRandomObstacles(Grid grid, int numObstacles) {
         int count = 0;
