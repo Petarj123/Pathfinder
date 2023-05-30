@@ -12,11 +12,16 @@ import java.util.*;
 public class AStarPathfinder {
     private final GridFactory gridFactory;
 
-    public List<AStarNode> findPath(AStarNode startAStarNode, AStarNode endAStarNode) {
+    public List<AStarNode> findPath(AStarNode startAStarNode, AStarNode endAStarNode, List<AStarNode> obstacles) {
         PriorityQueue<AStarNode> openSet = new PriorityQueue<>(Comparator.comparingDouble(AStarNode::getFScore));
         Set<AStarNode> closedSet = new HashSet<>();
-        Grid<AStarNode> grid = new Grid<>(50, 50, AStarNode.class);
 
+        Grid<AStarNode> grid = new Grid<>(10, 10, AStarNode.class);
+        if (obstacles != null) {
+            for (AStarNode node : obstacles){
+                grid.setObstacle(node.getX(), node.getY(), true);
+            }
+        }
         startAStarNode.setGScore(0);
         startAStarNode.setHScore(calculateHScore(startAStarNode, endAStarNode));
         startAStarNode.setFScore(startAStarNode.getGScore() + startAStarNode.getHScore());
@@ -24,7 +29,8 @@ public class AStarPathfinder {
 
         while (!openSet.isEmpty()) {
             AStarNode currentAStarNode = openSet.poll();
-
+            System.out.println(openSet);
+            System.out.println(closedSet);
             if (currentAStarNode == endAStarNode) {
                 return reconstructPath(currentAStarNode);
             }

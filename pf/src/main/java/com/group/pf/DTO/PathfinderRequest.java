@@ -1,6 +1,10 @@
 package com.group.pf.DTO;
 
-import com.group.pf.main.Node;
+import lombok.Data;
 
-public record PathfinderRequest(int startX, int startY, int endX, int endY) {
+import java.util.List;
+import java.util.Map;
+
+public record PathfinderRequest(List<Coordinates> start, List<Coordinates> end,List<Coordinates> obstacles) {
+
 }

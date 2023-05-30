@@ -1,9 +1,12 @@
 package com.group.pf.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.group.pf.AStarAlgorithm.AStarNode;
 import com.group.pf.AStarAlgorithm.AStarPathfinder;
 import com.group.pf.BreadthFirstAlgorithm.BreadthFirstPathfinder;
 import com.group.pf.BreadthFirstAlgorithm.DepthFirstPathfinder;
+import com.group.pf.DTO.Coordinates;
 import com.group.pf.DTO.PathfinderRequest;
 import com.group.pf.DijkstraAlgorithm.DijkstraPathfinder;
 import com.group.pf.Swarm.BiDirectionalSwarmPathfinder;
@@ -16,14 +19,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
 public class PathfinderController {
     private final GridFactory gridFactory;
     private final AStarPathfinder aStarPathfinder;
+
     @GetMapping("/home")
     public String home(Model model) {
         Grid<Node> grid = gridFactory.createGrid(50, 50, Node.class);
@@ -32,7 +36,7 @@ public class PathfinderController {
         BreadthFirstPathfinder breadthFirstPathfinder = new BreadthFirstPathfinder(gridFactory);
         DepthFirstPathfinder depthFirstPathfinder = new DepthFirstPathfinder(gridFactory);
         BiDirectionalSwarmPathfinder biDirectionalSwarmPathfinder = new BiDirectionalSwarmPathfinder(gridFactory);
-        System.out.println(Arrays.deepToString(grid.getGrid()));
+
         model.addAttribute("grid", grid.getGrid());
         model.addAttribute("AStar Algorithm", aStarPathfinder);
         model.addAttribute("Dijkstra Algorithm", dijkstraPathfinder);
@@ -41,21 +45,32 @@ public class PathfinderController {
         model.addAttribute("Bidirectional Swarm Algorithm", biDirectionalSwarmPathfinder);
         return "pathfinder";
     }
+
     @PostMapping("/pathfinder")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<AStarNode> findPath(@RequestBody PathfinderRequest request) {
-        int startX = request.startX();
-        int startY = request.startY();
-        int endX = request.endX();
-        int endY = request.endY();
-        System.out.println(startX);
-        System.out.println(startY);
-        System.out.println(endX);
-        System.out.println(endY);
-        AStarNode aStarStartNode = new AStarNode(startX, startY);
-        AStarNode aStarEndNode = new AStarNode(endX, endY);
+    public List<AStarNode> findPath(@RequestBody PathfinderRequest requestBody) {
+        List<Coordinates> startCoords = requestBody.start();
+        List<Coordinates> endCoords = requestBody.end();
+        List<Coordinates> obstacleCoords = requestBody.obstacles();
 
-        return aStarPathfinder.findPath(aStarStartNode, aStarEndNode);
+        Coordinates startCoord = startCoords.get(0);
+        Coordinates endCoord = endCoords.get(0);
+
+        AStarNode startNode = new AStarNode(startCoord.x(), startCoord.y());
+        startNode.setStart(true);
+        System.out.println(startNode.isStart());
+        AStarNode endNode = new AStarNode(endCoord.x(), endCoord.y());
+        endNode.setEnd(true);
+        System.out.println(endNode.isEnd());
+        List<AStarNode> obstacleNodes = obstacleCoords.stream()
+                .map(coordinates -> new AStarNode(coordinates.x(), coordinates.y()))
+                .toList();
+        for (AStarNode node : obstacleNodes){
+            node.setObstacle(true);
+        }
+        List<AStarNode> path = aStarPathfinder.findPath(startNode, endNode, obstacleNodes);
+        System.out.println(path);
+        return null;
     }
 }

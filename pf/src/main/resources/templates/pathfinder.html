@@ -19,7 +19,7 @@
 			<option value="biDirectionalSwarm">Bidirectional Swarm Algorithm</option>
 			<!-- Add more algorithms here -->
 		</select>
-		<button id="visualize-button" onclick="printNodeCoordinates()">Visualize</button>
+		<button id="visualize-button" onclick="visualize()">Visualize</button>
 	</div>
 	<div class="body">
 		<table>
@@ -30,11 +30,7 @@
 					<th:block th:each="cell : ${row}">
 						<td>
 							<div class="grid-node"
-							     data-x="${cell.x}"
-							     data-y="${cell.y}"
-							     data-isStart="${cell.isStart}"
-							     data-isEnd="${cell.isEnd}"
-							     data-isObstacle="${cell.isObstacle}"
+							     th:attr="data-x=${cell.x}, data-y=${cell.y}, data-isStart=${cell.isStart}, data-isEnd=${cell.isEnd}, data-isObstacle=${cell.isObstacle}"
 							     onclick="toggleNodes(this, event)">
 							</div>
 						</td>
@@ -43,18 +39,6 @@
 			</th:block>
 		</table>
 	</div>
-	<pre>
-    <span th:each="row : ${grid}">
-        <span th:each="cell : ${row}">
-            <span th:text="${cell.x}" />, <!-- Print x coordinate -->
-            <span th:text="${cell.y}" />, <!-- Print y coordinate -->
-            <span th:text="${cell.isStart}" />, <!-- Print isStart property -->
-            <span th:text="${cell.isEnd}" />, <!-- Print isEnd property -->
-            <span th:text="${cell.isObstacle}" /> <!-- Print isObstacle property -->
-            <br />
-        </span>
-    </span>
-	</pre>
 </div>
 </body>
 </html>
