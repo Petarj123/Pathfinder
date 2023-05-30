@@ -1,5 +1,7 @@
 package com.group.pf.BreadthFirstAlgorithm;
 
+import com.group.pf.testPackage.Grid;
+import com.group.pf.testPackage.Node;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.stereotype.Component;
@@ -10,34 +12,35 @@ import java.util.*;
 @Data
 @AllArgsConstructor
 public class DepthFirstPathfinder {
-    private Grid grid;
-    private Node startNode;
-    private Node endNode;
+    private Grid<BFSNode> grid;
+    private BFSNode startBFSNode;
+    private BFSNode endBFSNode;
 
-    public List<Node> findPath() {
-        List<Node> path = new ArrayList<>();
+    public List<BFSNode> findPath() {
+        List<BFSNode> path = new ArrayList<>();
 
-        Stack<Node> stack = new Stack<>();
-        Set<Node> visited = new HashSet<>();
+        Stack<BFSNode> stack = new Stack<>();
+        Set<BFSNode> visited = new HashSet<>();
 
-        stack.push(startNode);
+        stack.push(startBFSNode);
 
         while (!stack.isEmpty()) {
-            Node currentNode = stack.pop();
-            visited.add(currentNode);
+            BFSNode currentBFSNode = stack.pop();
+            visited.add(currentBFSNode);
 
-            if (currentNode.isEnd()) {
+            if (currentBFSNode.isEnd()) {
                 // Path found
-                path = reconstructPath(startNode, currentNode);
+                path = reconstructPath(startBFSNode, currentBFSNode);
                 break;
             }
 
-            List<Node> neighbors = currentNode.getNeighbors(grid);
-            for (Node neighbor : neighbors) {
+            List<Node> neighborNodes = currentBFSNode.getNeighbors(grid);
+            for (Node node : neighborNodes) {
+                BFSNode neighbor = (BFSNode) node;
                 if (!visited.contains(neighbor)) {
                     stack.push(neighbor);
                     visited.add(neighbor);
-                    (neighbor).setPrevious(currentNode);
+                    neighbor.setPrevious(currentBFSNode);
                 }
             }
         }
@@ -45,23 +48,22 @@ public class DepthFirstPathfinder {
         return path;
     }
 
-    private List<Node> reconstructPath(Node startNode, Node endNode) {
-        LinkedList<Node> path = new LinkedList<>();
-        Node currentNode = endNode;
+    private List<BFSNode> reconstructPath(BFSNode startBFSNode, BFSNode endBFSNode) {
+        LinkedList<BFSNode> path = new LinkedList<>();
+        BFSNode currentBFSNode = endBFSNode;
 
-        while (currentNode != startNode) {
-            path.addFirst(currentNode);
-            currentNode = currentNode.getPrevious();
+        while (currentBFSNode != startBFSNode) {
+            path.addFirst(currentBFSNode);
+            currentBFSNode = (BFSNode) currentBFSNode.getPrevious();
         }
 
-        path.addFirst(startNode);
+        path.addFirst(startBFSNode);
 
-        for (Node node : path) {
-            node.setPath(true);
+        for (BFSNode BFSNode : path) {
+            BFSNode.setPath(true);
         }
 
         return new ArrayList<>(path);
     }
-
 
 }

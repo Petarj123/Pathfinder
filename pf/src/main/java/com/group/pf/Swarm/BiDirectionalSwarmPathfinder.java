@@ -1,7 +1,7 @@
 package com.group.pf.Swarm;
 
-import com.group.pf.DijkstraAlgorithm.Grid;
-import com.group.pf.DijkstraAlgorithm.Node;
+import com.group.pf.testPackage.Grid;
+import com.group.pf.testPackage.Node;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.stereotype.Component;
@@ -12,38 +12,39 @@ import java.util.*;
 @Data
 @AllArgsConstructor
 public class BiDirectionalSwarmPathfinder {
-    private Grid grid;
-    private Node startNode;
-    private Node endNode;
+    private Grid<SwarmNode> grid;
+    private SwarmNode startSwarmNode;
+    private SwarmNode endSwarmNode;
 
-    public List<Node> findPath() {
+    public List<SwarmNode> findPath() {
         // Initialize the forward and backward queues
-        Queue<Node> forwardQueue = new LinkedList<>();
-        Queue<Node> backwardQueue = new LinkedList<>();
+        Queue<SwarmNode> forwardQueue = new LinkedList<>();
+        Queue<SwarmNode> backwardQueue = new LinkedList<>();
 
         // Initialize the forward and backward visited sets
-        Set<Node> forwardVisited = new HashSet<>();
-        Set<Node> backwardVisited = new HashSet<>();
+        Set<SwarmNode> forwardVisited = new HashSet<>();
+        Set<SwarmNode> backwardVisited = new HashSet<>();
 
         // Initialize the forward and backward parents maps
-        Map<Node, Node> forwardParents = new HashMap<>();
-        Map<Node, Node> backwardParents = new HashMap<>();
+        Map<SwarmNode, SwarmNode> forwardParents = new HashMap<>();
+        Map<SwarmNode, SwarmNode> backwardParents = new HashMap<>();
 
         // Enqueue the start node in the forward queue
-        forwardQueue.offer(startNode);
-        forwardVisited.add(startNode);
+        forwardQueue.offer(startSwarmNode);
+        forwardVisited.add(startSwarmNode);
 
         // Enqueue the end node in the backward queue
-        backwardQueue.offer(endNode);
-        backwardVisited.add(endNode);
+        backwardQueue.offer(endSwarmNode);
+        backwardVisited.add(endSwarmNode);
 
         // Perform bidirectional traversal until a meeting point is found
         while (!forwardQueue.isEmpty() && !backwardQueue.isEmpty()) {
             // Expand the forward search
-            Node forwardCurrent = forwardQueue.poll();
-            List<Node> forwardNeighbors = forwardCurrent.getNeighbours(grid);
+            SwarmNode forwardCurrent = forwardQueue.poll();
+            List<Node> forwardNeighbors = forwardCurrent.getNeighbors(grid);
 
-            for (Node forwardNeighbor : forwardNeighbors) {
+            for (Node forwardNeighborNode : forwardNeighbors) {
+                SwarmNode forwardNeighbor = (SwarmNode) forwardNeighborNode;
                 if (!forwardVisited.contains(forwardNeighbor) && !forwardNeighbor.isObstacle()) {
                     forwardQueue.offer(forwardNeighbor);
                     forwardVisited.add(forwardNeighbor);
@@ -58,11 +59,12 @@ public class BiDirectionalSwarmPathfinder {
             }
 
             // Expand the backward search
-            Node backwardCurrent = backwardQueue.poll();
+            SwarmNode backwardCurrent = backwardQueue.poll();
             assert backwardCurrent != null;
-            List<Node> backwardNeighbors = backwardCurrent.getNeighbours(grid);
+            List<Node> backwardNeighbors = backwardCurrent.getNeighbors(grid);
 
-            for (Node backwardNeighbor : backwardNeighbors) {
+            for (Node backwardNeighborNode : backwardNeighbors) {
+                SwarmNode backwardNeighbor = (SwarmNode) backwardNeighborNode;
                 if (!backwardVisited.contains(backwardNeighbor) && !backwardNeighbor.isObstacle()) {
                     backwardQueue.offer(backwardNeighbor);
                     backwardVisited.add(backwardNeighbor);
@@ -80,19 +82,20 @@ public class BiDirectionalSwarmPathfinder {
         // No path found
         return Collections.emptyList();
     }
-    private List<Node> reconstructPath(Map<Node, Node> forwardParents, Map<Node, Node> backwardParents, Node meetingNode) {
-        List<Node> forwardPath = new ArrayList<>();
-        List<Node> backwardPath = new ArrayList<>();
+
+    private List<SwarmNode> reconstructPath(Map<SwarmNode, SwarmNode> forwardParents, Map<SwarmNode, SwarmNode> backwardParents, SwarmNode meetingSwarmNode) {
+        List<SwarmNode> forwardPath = new ArrayList<>();
+        List<SwarmNode> backwardPath = new ArrayList<>();
 
         // Reconstruct the forward path
-        Node forwardCurrent = meetingNode;
+        SwarmNode forwardCurrent = meetingSwarmNode;
         while (forwardCurrent != null) {
             forwardPath.add(forwardCurrent);
             forwardCurrent = forwardParents.get(forwardCurrent);
         }
 
         // Reconstruct the backward path
-        Node backwardCurrent = meetingNode;
+        SwarmNode backwardCurrent = meetingSwarmNode;
         while (backwardCurrent != null) {
             backwardPath.add(backwardCurrent);
             backwardCurrent = backwardParents.get(backwardCurrent);
@@ -103,8 +106,8 @@ public class BiDirectionalSwarmPathfinder {
 
         // Combine the forward and backward paths
         forwardPath.addAll(backwardPath);
-        for (Node node : forwardPath) {
-            node.setPath(true);
+        for (SwarmNode swarmNode : forwardPath) {
+            swarmNode.setPath(true);
         }
         return forwardPath;
     }
