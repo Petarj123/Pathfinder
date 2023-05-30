@@ -5,7 +5,7 @@ import com.group.pf.BreadthFirstAlgorithm.BreadthFirstPathfinder;
 import com.group.pf.BreadthFirstAlgorithm.DepthFirstPathfinder;
 
 import com.group.pf.BreadthFirstAlgorithm.BFSNode;
-import com.group.pf.testPackage.Grid;
+import com.group.pf.main.Grid;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

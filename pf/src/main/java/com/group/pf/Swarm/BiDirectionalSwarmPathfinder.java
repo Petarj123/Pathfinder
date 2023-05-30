@@ -1,7 +1,8 @@
 package com.group.pf.Swarm;
 
-import com.group.pf.testPackage.Grid;
-import com.group.pf.testPackage.Node;
+import com.group.pf.main.Grid;
+import com.group.pf.main.GridFactory;
+import com.group.pf.main.Node;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.stereotype.Component;
@@ -12,11 +13,10 @@ import java.util.*;
 @Data
 @AllArgsConstructor
 public class BiDirectionalSwarmPathfinder {
-    private Grid<SwarmNode> grid;
-    private SwarmNode startSwarmNode;
-    private SwarmNode endSwarmNode;
+    private final GridFactory gridFactory;
 
-    public List<SwarmNode> findPath() {
+    public List<SwarmNode> findPath(SwarmNode startSwarmNode, SwarmNode endSwarmNode) {
+        Grid<SwarmNode> grid = gridFactory.createGrid(50, 50, SwarmNode.class);
         // Initialize the forward and backward queues
         Queue<SwarmNode> forwardQueue = new LinkedList<>();
         Queue<SwarmNode> backwardQueue = new LinkedList<>();

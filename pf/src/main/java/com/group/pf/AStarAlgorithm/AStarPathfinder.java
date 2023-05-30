@@ -1,23 +1,21 @@
 package com.group.pf.AStarAlgorithm;
 
-import com.group.pf.testPackage.Grid;
-import com.group.pf.testPackage.Node;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import org.springframework.stereotype.Component;
+import com.group.pf.main.Grid;
+import com.group.pf.main.GridFactory;
+import com.group.pf.main.Node;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
-@Component
-@Data
-@AllArgsConstructor
+@Service
+@RequiredArgsConstructor
 public class AStarPathfinder {
-    private Grid grid;
-    private AStarNode startAStarNode;
-    private AStarNode endAStarNode;
+    private final GridFactory gridFactory;
 
-    public List<AStarNode> findPath() {
+    public List<AStarNode> findPath(AStarNode startAStarNode, AStarNode endAStarNode) {
         PriorityQueue<AStarNode> openSet = new PriorityQueue<>(Comparator.comparingDouble(AStarNode::getFScore));
         Set<AStarNode> closedSet = new HashSet<>();
+        Grid<AStarNode> grid = new Grid<>(50, 50, AStarNode.class);
 
         startAStarNode.setGScore(0);
         startAStarNode.setHScore(calculateHScore(startAStarNode, endAStarNode));

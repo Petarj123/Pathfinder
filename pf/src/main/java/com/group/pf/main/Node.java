@@ -1,4 +1,4 @@
-package com.group.pf.testPackage;
+package com.group.pf.main;
 
 import lombok.Data;
 

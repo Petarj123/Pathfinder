@@ -1,7 +1,9 @@
-package com.group.pf.testPackage;
+package com.group.pf.main;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;

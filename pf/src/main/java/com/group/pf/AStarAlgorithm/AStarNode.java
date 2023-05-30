@@ -1,6 +1,6 @@
 package com.group.pf.AStarAlgorithm;
 
-import com.group.pf.testPackage.Node;
+import com.group.pf.main.Node;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

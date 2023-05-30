@@ -2,8 +2,7 @@ package com.group.pf;
 
 import com.group.pf.DijkstraAlgorithm.DijkstraNode;
 import com.group.pf.DijkstraAlgorithm.DijkstraPathfinder;
-import com.group.pf.Swarm.SwarmNode;
-import com.group.pf.testPackage.Grid;
+import com.group.pf.main.Grid;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

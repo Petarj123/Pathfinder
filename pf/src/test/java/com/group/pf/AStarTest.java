@@ -2,7 +2,7 @@ package com.group.pf;
 
 import com.group.pf.AStarAlgorithm.AStarPathfinder;
 import com.group.pf.AStarAlgorithm.AStarNode;
-import com.group.pf.testPackage.Grid;
+import com.group.pf.main.Grid;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -11,7 +11,7 @@ public class AStarTest {
     @Test
     void testFindPath() {
         // Create a grid
-        Grid<AStarNode> grid = new Grid<AStarNode>(50, 50, AStarNode.class);
+
 
         // Set the start and end nodes
         AStarNode startAStarNode = grid.getNode(0, 0);
@@ -23,10 +23,10 @@ public class AStarTest {
         setRandomObstacles(grid, 200);
 
         // Create the A* pathfinder
-        AStarPathfinder pathfinder = new AStarPathfinder(grid, startAStarNode, endAStarNode);
+        AStarPathfinder pathfinder = new AStarPathfinder();
 
         // Find the path
-        List<AStarNode> path = pathfinder.findPath();
+        List<AStarNode> path = pathfinder.findPath(startAStarNode, endAStarNode);
 
         // Print the grid
         printGrid(grid, path);

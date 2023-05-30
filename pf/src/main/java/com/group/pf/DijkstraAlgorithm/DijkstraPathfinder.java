@@ -1,32 +1,33 @@
 package com.group.pf.DijkstraAlgorithm;
 
-import com.group.pf.testPackage.Grid;
-import com.group.pf.testPackage.Node;
+import com.group.pf.BreadthFirstAlgorithm.BFSNode;
+import com.group.pf.main.Grid;
+import com.group.pf.main.GridFactory;
+import com.group.pf.main.Node;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 @Component
 @Data
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DijkstraPathfinder {
-    private Grid<DijkstraNode> grid;
-    private DijkstraNode startDijkstraNode;
-    private DijkstraNode endDijkstraNode;
+    private final GridFactory gridFactory;
 
-    public List<DijkstraNode> findPath() {
+    public List<DijkstraNode> findPath(DijkstraNode startDijkstraNode, DijkstraNode endDijkstraNode) {
         PriorityQueue<DijkstraNode> queue = new PriorityQueue<>();
         Set<DijkstraNode> visited = new HashSet<>();
-
+        Grid<DijkstraNode> grid = gridFactory.createGrid(50, 50, DijkstraNode.class);
         startDijkstraNode.setDistance(0);
         queue.offer(startDijkstraNode);
 
         while (!queue.isEmpty()) {
             DijkstraNode currentDijkstraNode = queue.poll();
             if (currentDijkstraNode == endDijkstraNode) {
-                return reconstructPath();
+                return reconstructPath(endDijkstraNode);
             }
             visited.add(currentDijkstraNode);
             for (Node neighborNodes : currentDijkstraNode.getNeighbors(grid)){
@@ -44,7 +45,7 @@ public class DijkstraPathfinder {
         return Collections.emptyList();
     }
 
-    private List<DijkstraNode> reconstructPath() {
+    private List<DijkstraNode> reconstructPath(DijkstraNode endDijkstraNode) {
         List<DijkstraNode> path = new ArrayList<>();
         DijkstraNode current = endDijkstraNode;
 

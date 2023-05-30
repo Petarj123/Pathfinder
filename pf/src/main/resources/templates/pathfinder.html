@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Pathfinder</title>
+	<link rel="stylesheet" th:href="@{/style.css}">
+	<script th:src="@{/main.js}" defer></script>
+</head>
+<body>
+<div class="container">
+	<div class="nav-bar">
+		<h1>Pathfinder</h1>
+		<select id="algorithm-selector">
+			<option value="" disabled selected>Select Algorithm</option>
+			<option value="aStar">A* Algorithm</option>
+			<option value="dijkstra">Dijkstra's Algorithm</option>
+			<option value="breadthFirst">Breadth First Algorithm</option>
+			<option value="depthFirst">Depth First Algorithm</option>
+			<option value="biDirectionalSwarm">Bidirectional Swarm Algorithm</option>
+			<!-- Add more algorithms here -->
+		</select>
+		<button id="visualize-button" onclick="printNodeCoordinates()">Visualize</button>
+	</div>
+	<div class="body">
+		<table>
+			<!-- Iterate over the rows of the grid -->
+			<th:block th:each="row : ${grid}">
+				<tr>
+					<!-- Iterate over the cells in the current row -->
+					<th:block th:each="cell : ${row}">
+						<td>
+							<div class="grid-node"
+							     data-x="${cell.x}"
+							     data-y="${cell.y}"
+							     data-isStart="${cell.isStart}"
+							     data-isEnd="${cell.isEnd}"
+							     data-isObstacle="${cell.isObstacle}"
+							     onclick="toggleNodes(this, event)">
+							</div>
+						</td>
+					</th:block>
+				</tr>
+			</th:block>
+		</table>
+	</div>
+	<pre>
+    <span th:each="row : ${grid}">
+        <span th:each="cell : ${row}">
+            <span th:text="${cell.x}" />, <!-- Print x coordinate -->
+            <span th:text="${cell.y}" />, <!-- Print y coordinate -->
+            <span th:text="${cell.isStart}" />, <!-- Print isStart property -->
+            <span th:text="${cell.isEnd}" />, <!-- Print isEnd property -->
+            <span th:text="${cell.isObstacle}" /> <!-- Print isObstacle property -->
+            <br />
+        </span>
+    </span>
+	</pre>
+</div>
+</body>
+</html>

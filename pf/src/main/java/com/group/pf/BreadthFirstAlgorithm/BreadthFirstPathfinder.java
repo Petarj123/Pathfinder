@@ -1,25 +1,25 @@
 package com.group.pf.BreadthFirstAlgorithm;
 
-import com.group.pf.testPackage.Grid;
-import com.group.pf.testPackage.Node;
-import lombok.AllArgsConstructor;
+import com.group.pf.main.Grid;
+import com.group.pf.main.GridFactory;
+import com.group.pf.main.Node;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 @Component
 @Data
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class BreadthFirstPathfinder {
-    private Grid<BFSNode> grid;
-    private BFSNode startBFSNode;
-    private BFSNode endBFSNode;
+    private final GridFactory gridFactory;
 
-    public List<BFSNode> findPath() {
+    public List<BFSNode> findPath(BFSNode startBFSNode, BFSNode endBFSNode) {
         Queue<BFSNode> queue = new LinkedList<>();
         Set<BFSNode> visited = new HashSet<>();
         Map<BFSNode, BFSNode> parents = new HashMap<>();
+        Grid<BFSNode> grid = gridFactory.createGrid(50, 50, BFSNode.class);
 
         queue.offer(startBFSNode);
         visited.add(startBFSNode);
@@ -28,7 +28,7 @@ public class BreadthFirstPathfinder {
             BFSNode currentBFSNode = queue.poll();
 
             if (currentBFSNode == endBFSNode) {
-                return reconstructPath(parents);
+                return reconstructPath(parents, endBFSNode);
             }
 
             for (Node neighborNode : currentBFSNode.getNeighbors(grid)) {
@@ -42,7 +42,7 @@ public class BreadthFirstPathfinder {
         }
         return Collections.emptyList();
     }
-    private List<BFSNode> reconstructPath(Map<BFSNode, BFSNode> parents) {
+    private List<BFSNode> reconstructPath(Map<BFSNode, BFSNode> parents, BFSNode endBFSNode) {
         List<BFSNode> path = new ArrayList<>();
         BFSNode current = endBFSNode;
 

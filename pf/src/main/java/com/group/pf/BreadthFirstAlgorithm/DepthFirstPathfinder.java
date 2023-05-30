@@ -1,24 +1,23 @@
 package com.group.pf.BreadthFirstAlgorithm;
 
-import com.group.pf.testPackage.Grid;
-import com.group.pf.testPackage.Node;
-import lombok.AllArgsConstructor;
+import com.group.pf.main.Grid;
+import com.group.pf.main.GridFactory;
+import com.group.pf.main.Node;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 @Component
 @Data
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DepthFirstPathfinder {
-    private Grid<BFSNode> grid;
-    private BFSNode startBFSNode;
-    private BFSNode endBFSNode;
+    private final GridFactory gridFactory;
 
-    public List<BFSNode> findPath() {
+    public List<BFSNode> findPath(BFSNode startBFSNode) {
         List<BFSNode> path = new ArrayList<>();
-
+        Grid<BFSNode> grid = gridFactory.createGrid(50, 50, BFSNode.class);
         Stack<BFSNode> stack = new Stack<>();
         Set<BFSNode> visited = new HashSet<>();
 

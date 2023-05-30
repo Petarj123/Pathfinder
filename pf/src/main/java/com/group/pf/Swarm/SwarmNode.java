@@ -1,14 +1,10 @@
 package com.group.pf.Swarm;
 
 
-import com.group.pf.testPackage.Node;
-import lombok.Data;
+import com.group.pf.main.Node;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
