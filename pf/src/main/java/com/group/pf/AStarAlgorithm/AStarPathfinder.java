@@ -16,7 +16,7 @@ public class AStarPathfinder {
         PriorityQueue<AStarNode> openSet = new PriorityQueue<>(Comparator.comparingDouble(AStarNode::getFScore));
         Set<AStarNode> closedSet = new HashSet<>();
 
-        Grid<AStarNode> grid = new Grid<>(10, 10, AStarNode.class);
+        Grid<AStarNode> grid = new Grid<>(50, 50, AStarNode.class);
         if (obstacles != null) {
             for (AStarNode node : obstacles){
                 grid.setObstacle(node.getX(), node.getY(), true);
@@ -29,9 +29,7 @@ public class AStarPathfinder {
 
         while (!openSet.isEmpty()) {
             AStarNode currentAStarNode = openSet.poll();
-            System.out.println(openSet);
-            System.out.println(closedSet);
-            if (currentAStarNode == endAStarNode) {
+            if (currentAStarNode.equals(endAStarNode)) {
                 return reconstructPath(currentAStarNode);
             }
 

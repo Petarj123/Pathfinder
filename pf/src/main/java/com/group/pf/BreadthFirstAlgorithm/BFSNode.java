@@ -14,5 +14,4 @@ public class BFSNode extends Node {
     public BFSNode(int x, int y) {
         super(x, y);
     }
-
 }

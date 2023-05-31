@@ -1,5 +1,6 @@
 package com.group.pf.Swarm;
 
+import com.group.pf.BreadthFirstAlgorithm.BFSNode;
 import com.group.pf.main.Grid;
 import com.group.pf.main.GridFactory;
 import com.group.pf.main.Node;
@@ -15,7 +16,7 @@ import java.util.*;
 public class BiDirectionalSwarmPathfinder {
     private final GridFactory gridFactory;
 
-    public List<SwarmNode> findPath(SwarmNode startSwarmNode, SwarmNode endSwarmNode) {
+    public List<SwarmNode> findPath(SwarmNode startSwarmNode, SwarmNode endSwarmNode, List<SwarmNode> obstacles) {
         Grid<SwarmNode> grid = gridFactory.createGrid(50, 50, SwarmNode.class);
         // Initialize the forward and backward queues
         Queue<SwarmNode> forwardQueue = new LinkedList<>();
@@ -28,6 +29,12 @@ public class BiDirectionalSwarmPathfinder {
         // Initialize the forward and backward parents maps
         Map<SwarmNode, SwarmNode> forwardParents = new HashMap<>();
         Map<SwarmNode, SwarmNode> backwardParents = new HashMap<>();
+
+        if (obstacles != null) {
+            for (SwarmNode obstacle : obstacles) {
+                grid.setObstacle(obstacle.getX(), obstacle.getY(), true);
+            }
+        }
 
         // Enqueue the start node in the forward queue
         forwardQueue.offer(startSwarmNode);

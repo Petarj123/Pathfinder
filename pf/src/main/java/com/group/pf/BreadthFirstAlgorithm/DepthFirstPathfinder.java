@@ -15,11 +15,16 @@ import java.util.*;
 public class DepthFirstPathfinder {
     private final GridFactory gridFactory;
 
-    public List<BFSNode> findPath(BFSNode startBFSNode) {
+    public List<BFSNode> findPath(BFSNode startBFSNode, BFSNode endBFSNode, List<BFSNode> obstacles) {
         List<BFSNode> path = new ArrayList<>();
         Grid<BFSNode> grid = gridFactory.createGrid(50, 50, BFSNode.class);
         Stack<BFSNode> stack = new Stack<>();
         Set<BFSNode> visited = new HashSet<>();
+        if (obstacles != null) {
+            for (BFSNode obstacle : obstacles) {
+                grid.setObstacle(obstacle.getX(), obstacle.getY(), true);
+            }
+        }
 
         stack.push(startBFSNode);
 
@@ -27,7 +32,7 @@ public class DepthFirstPathfinder {
             BFSNode currentBFSNode = stack.pop();
             visited.add(currentBFSNode);
 
-            if (currentBFSNode.isEnd()) {
+            if (currentBFSNode.equals(endBFSNode)) {
                 // Path found
                 path = reconstructPath(startBFSNode, currentBFSNode);
                 break;
@@ -36,7 +41,7 @@ public class DepthFirstPathfinder {
             List<Node> neighborNodes = currentBFSNode.getNeighbors(grid);
             for (Node node : neighborNodes) {
                 BFSNode neighbor = (BFSNode) node;
-                if (!visited.contains(neighbor)) {
+                if (!visited.contains(neighbor) && !neighbor.isObstacle()) {
                     stack.push(neighbor);
                     visited.add(neighbor);
                     neighbor.setPrevious(currentBFSNode);

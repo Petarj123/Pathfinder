@@ -14,9 +14,6 @@ function toggleNodes(element, event) {
         createObstacle(element, x, y);
     }
 
-    console.log('Node properties:', x, y);
-
-    // Rest of your code...
 }
 function createStartNode(element, x, y) {
     if (startNode) {
@@ -57,6 +54,14 @@ function createObstacle(element, x, y) {
 
     console.log('Obstacle node:', x, y);
 }
+function createPathNode(element, x, y) {
+  element.setAttribute('data-isPath', 'true');
+  element.classList.add('path');
+  element.style.backgroundColor = 'yellow';
+
+  console.log('Path node:', x, y);
+}
+
 function getSelectedNodeCoordinates() {
   var nodeMap = new Map();
 
@@ -95,23 +100,26 @@ function getSelectedNodeCoordinates() {
 
   return nodeMap;
 }
+// Global variable to store the current path
+var pathNodes = [];
 
 function visualize() {
   // Get the selected node coordinates map
   var nodeMap = getSelectedNodeCoordinates();
-
+  var algorithm = document.getElementById('algorithm-selector').value;
+  console.log('Algorithm:', algorithm);
   // Create the request payload
   var payload = {
-      start: nodeMap.get('start') || [],
-      end: nodeMap.get('end') || [],
-      obstacles: nodeMap.get('obstacles') || [],
+    start: nodeMap.get('start') || [],
+    end: nodeMap.get('end') || [],
+    obstacles: nodeMap.get('obstacles') || [],
   };
 
   // Convert the payload to a JSON string
   var jsonData = JSON.stringify(payload);
-  console.log(jsonData);
+
   // Send the data to the backend using fetch
-  fetch('http://localhost:8080/pathfinder', {
+  fetch('http://localhost:8080/pathfinder/' + algorithm, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -120,15 +128,64 @@ function visualize() {
   })
     .then(function (response) {
       if (response.ok) {
-        // Request successful, do something with the response if needed
-        console.log('Visualization request successful');
+        // Request successful, parse the response
+        return response.json();
       } else {
         // Request failed, handle the error
-        console.error('Visualization request failed');
+        throw new Error('Visualization request failed');
       }
     })
+    .then(function (path) {
+
+      // Store the new path nodes
+      pathNodes = path.map(function (coord) {
+        var node = document.querySelector(
+          '[data-x="' + coord.x + '"][data-y="' + coord.y + '"]'
+        );
+        createPathNode(node, coord.x, coord.y);
+        return node;
+      });
+
+      console.log('Visualization request successful');
+    })
     .catch(function (error) {
-      // Request failed, handle the error
+      // Request or parsing failed, handle the error
       console.error('Visualization request failed', error);
     });
+}
+
+function clearGrid() {
+  setTimeout(function() {
+    // Reset start nodes
+    var startNodes = document.getElementsByClassName('start');
+    for (var i = 0; i < startNodes.length; i++) {
+      var node = startNodes[i];
+      node.style.backgroundColor = 'white';
+      node.setAttribute('data-isStart', 'false');
+    }
+
+    // Reset end nodes
+    var endNodes = document.getElementsByClassName('end');
+    for (var i = 0; i < endNodes.length; i++) {
+      var node = endNodes[i];
+      node.style.backgroundColor = 'white';
+      node.setAttribute('data-isEnd', 'false');
+    }
+
+    // Reset obstacle nodes
+    var obstacleNodes = document.getElementsByClassName('obstacle');
+    for (var i = 0; i < obstacleNodes.length; i++) {
+      var node = obstacleNodes[i];
+      node.style.backgroundColor = 'white';
+      node.setAttribute('data-isObstacle', 'false');
+    }
+
+    // Reset path nodes
+    var pathNodes = document.getElementsByClassName('path');
+    for (var i = 0; i < pathNodes.length; i++) {
+      var node = pathNodes[i];
+      node.style.backgroundColor = 'white';
+      node.setAttribute('data-isPath', 'false');
+    }
+  }, 0);
 }

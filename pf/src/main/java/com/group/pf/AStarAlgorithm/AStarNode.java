@@ -23,11 +23,9 @@ public class AStarNode extends Node implements Comparable<AStarNode>{
         this.hScore = Double.POSITIVE_INFINITY;
     }
 
-
     @Override
     public int compareTo(AStarNode o) {
         return Double.compare(this.getFScore(), o.getFScore());
     }
-
 
 }
