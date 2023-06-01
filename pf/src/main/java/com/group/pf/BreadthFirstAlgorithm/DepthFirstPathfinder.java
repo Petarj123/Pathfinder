@@ -15,9 +15,9 @@ import java.util.*;
 public class DepthFirstPathfinder {
     private final GridFactory gridFactory;
 
-    public List<BFSNode> findPath(BFSNode startBFSNode, BFSNode endBFSNode, List<BFSNode> obstacles) {
+    public List<BFSNode> findPath(BFSNode startBFSNode, BFSNode endBFSNode, List<BFSNode> obstacles, int height, int width) {
         List<BFSNode> path = new ArrayList<>();
-        Grid<BFSNode> grid = gridFactory.createGrid(50, 50, BFSNode.class);
+        Grid<BFSNode> grid = gridFactory.createGrid(width, height, BFSNode.class);
         Stack<BFSNode> stack = new Stack<>();
         Set<BFSNode> visited = new HashSet<>();
         if (obstacles != null) {

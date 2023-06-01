@@ -34,7 +34,7 @@ public class PathfinderController {
 
     @GetMapping("/home")
     public String home(Model model) {
-        Grid<Node> grid = gridFactory.createGrid(50, 50, Node.class);
+        Grid<Node> grid = gridFactory.createGrid(25, 52, Node.class);
         AStarPathfinder aStarPathfinder = new AStarPathfinder(gridFactory);
         DijkstraPathfinder dijkstraPathfinder = new DijkstraPathfinder(gridFactory);
         BreadthFirstPathfinder breadthFirstPathfinder = new BreadthFirstPathfinder(gridFactory);
@@ -60,7 +60,8 @@ public class PathfinderController {
 
         Coordinates startCoord = startCoords.get(0);
         Coordinates endCoord = endCoords.get(0);
-
+        System.out.println(requestBody.height());
+        System.out.println(requestBody.width());
         AStarNode startNode = new AStarNode(startCoord.x(), startCoord.y());
         startNode.setStart(true);
         AStarNode endNode = new AStarNode(endCoord.x(), endCoord.y());
@@ -70,9 +71,7 @@ public class PathfinderController {
                 .toList();
         setObstacles(obstacleNodes);
 
-        List<AStarNode> path = aStarPathfinder.findPath(startNode, endNode, obstacleNodes);
-
-        // Extract the coordinates from the path nodes
+        List<AStarNode> path = aStarPathfinder.findPath(startNode, endNode, obstacleNodes, requestBody.height(), requestBody.width());
         System.out.println(path);
         return convertNodeToCoordinate(path);
     }
@@ -96,7 +95,7 @@ public class PathfinderController {
                 .map(coordinates -> new DijkstraNode(coordinates.x(), coordinates.y()))
                 .toList();
         setObstacles(obstacleNodes);
-        List<DijkstraNode> path = dijkstraPathfinder.findPath(startNode, endNode, obstacleNodes);
+        List<DijkstraNode> path = dijkstraPathfinder.findPath(startNode, endNode, obstacleNodes, requestBody.height(), requestBody.width());
 
         // Extract the coordinates from the path nodes
         System.out.println(path);
@@ -123,7 +122,7 @@ public class PathfinderController {
                .toList();
         setObstacles(obstacleNodes);
 
-        List<BFSNode> path = breadthFirstPathfinder.findPath(startNode, endNode, obstacleNodes);
+        List<BFSNode> path = breadthFirstPathfinder.findPath(startNode, endNode, obstacleNodes, requestBody.height(), requestBody.width());
         System.out.println(path);
         return convertNodeToCoordinate(path);
     }
@@ -148,7 +147,7 @@ public class PathfinderController {
                 .toList();
         setObstacles(obstacleNodes);
 
-        List<BFSNode> path = depthFirstPathfinder.findPath(startNode, endNode, obstacleNodes);
+        List<BFSNode> path = depthFirstPathfinder.findPath(startNode, endNode, obstacleNodes, requestBody.height(), requestBody.width());
         System.out.println(path);
         return convertNodeToCoordinate(path);
     }
@@ -173,7 +172,7 @@ public class PathfinderController {
               .toList();
         setObstacles(obstacleNodes);
 
-        List<SwarmNode> path = biDirectionalSwarmPathfinder.findPath(startNode, endNode, obstacleNodes);
+        List<SwarmNode> path = biDirectionalSwarmPathfinder.findPath(startNode, endNode, obstacleNodes, requestBody.height(), requestBody.width());
         return convertNodeToCoordinate(path);
     }
     private void setObstacles(List<? extends Node> obstacles){

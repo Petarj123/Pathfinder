@@ -1,6 +1,54 @@
 
 var startNode = null;
 var endNode = null;
+var gridContainer = document.getElementById('grid-container');
+var containerWidth = gridContainer.offsetWidth;
+var containerHeight = gridContainer.offsetHeight;
+var nodeSize = 20; // Change the desired node size as needed
+
+// Calculate the number of rows and columns based on the container size and node size
+var numOfRows = Math.floor(containerHeight / nodeSize);
+var numOfCols = Math.floor(containerWidth / nodeSize);
+
+function createDynamicGrid() {
+  
+
+  // Clear the grid container
+  gridContainer.innerHTML = '';
+
+  // Create the grid table dynamically
+  var table = document.createElement('table');
+  for (var row = 0; row < numOfRows; row++) {
+    var tr = document.createElement('tr');
+    for (var col = 0; col < numOfCols; col++) {
+      var td = document.createElement('td');
+      var div = document.createElement('div');
+      div.className = 'grid-node';
+      div.setAttribute('data-x', col);
+      div.setAttribute('data-y', row);
+      div.setAttribute('data-isStart', 'false');
+      div.setAttribute('data-isEnd', 'false');
+      div.setAttribute('data-isObstacle', 'false');
+      div.setAttribute('data-isPath', 'false');
+      div.style.width = nodeSize + 'px';
+      div.style.height = nodeSize + 'px';
+      div.addEventListener('click', function (event) {
+        toggleNodes(this, event);
+      });
+      td.appendChild(div);
+      tr.appendChild(td);
+    }
+    table.appendChild(tr);
+  }
+  gridContainer.appendChild(table);
+}
+
+// Call the function to create the grid initially
+createDynamicGrid();
+
+// Add an event listener to window resize to recreate the grid dynamically when the screen size changes
+window.addEventListener('resize', createDynamicGrid);
+
 
 function toggleNodes(element, event) {
     var x = parseInt(element.getAttribute('data-x'));
@@ -12,9 +60,9 @@ function toggleNodes(element, event) {
         createEndNode(element, x, y);
     } else if (event.button === 0) { // Left click
         createObstacle(element, x, y);
-    }
-
+    } 
 }
+
 function createStartNode(element, x, y) {
     if (startNode) {
         // Reset the previous start node
@@ -27,6 +75,11 @@ function createStartNode(element, x, y) {
     startNode.setAttribute('data-isStart', 'true');
     startNode.classList.add('start');
     startNode.style.backgroundColor = 'red';
+
+    // Reset other attributes
+    startNode.setAttribute('data-isEnd', 'false');
+    startNode.setAttribute('data-isObstacle', 'false');
+    startNode.setAttribute('data-isPath', 'false');
 
     console.log('Start node:', x, y);
 }
@@ -44,6 +97,11 @@ function createEndNode(element, x, y) {
     endNode.classList.add('end');
     endNode.style.backgroundColor = 'green';
 
+    // Reset other attributes
+    endNode.setAttribute('data-isStart', 'false');
+    endNode.setAttribute('data-isObstacle', 'false');
+    endNode.setAttribute('data-isPath', 'false');
+
     console.log('End node:', x, y);
 }
 
@@ -52,15 +110,27 @@ function createObstacle(element, x, y) {
     element.classList.add('obstacle');
     element.style.backgroundColor = 'black';
 
+    // Reset other attributes
+    element.setAttribute('data-isStart', 'false');
+    element.setAttribute('data-isEnd', 'false');
+    element.setAttribute('data-isPath', 'false');
+
     console.log('Obstacle node:', x, y);
 }
+
 function createPathNode(element, x, y) {
-  element.setAttribute('data-isPath', 'true');
-  element.classList.add('path');
-  element.style.backgroundColor = 'yellow';
+  const isStart = element.getAttribute('data-isStart');
+  const isEnd = element.getAttribute('data-isEnd');
+
+  if (!(isStart === 'true' || isEnd === 'true')) {
+    element.setAttribute('data-isPath', 'true');
+    element.classList.add('path');
+    element.style.backgroundColor = 'yellow';
+  }
 
   console.log('Path node:', x, y);
 }
+
 
 function getSelectedNodeCoordinates() {
   var nodeMap = new Map();
@@ -104,6 +174,7 @@ function getSelectedNodeCoordinates() {
 var pathNodes = [];
 
 function visualize() {
+  clearPath();
   // Get the selected node coordinates map
   var nodeMap = getSelectedNodeCoordinates();
   var algorithm = document.getElementById('algorithm-selector').value;
@@ -113,6 +184,8 @@ function visualize() {
     start: nodeMap.get('start') || [],
     end: nodeMap.get('end') || [],
     obstacles: nodeMap.get('obstacles') || [],
+    height: numOfRows,
+    width: numOfCols,
   };
 
   // Convert the payload to a JSON string
@@ -188,4 +261,12 @@ function clearGrid() {
       node.setAttribute('data-isPath', 'false');
     }
   }, 0);
+}
+function clearPath(){
+  var pathNodes = document.getElementsByClassName('path');
+  for(var i = 0; i < pathNodes.length; i++){
+    var node = pathNodes[i];
+    node.style.backgroundColor = 'white';
+    node.setAttribute('data-isPath', 'false');
+  }
 }

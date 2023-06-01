@@ -16,8 +16,8 @@ import java.util.*;
 public class BiDirectionalSwarmPathfinder {
     private final GridFactory gridFactory;
 
-    public List<SwarmNode> findPath(SwarmNode startSwarmNode, SwarmNode endSwarmNode, List<SwarmNode> obstacles) {
-        Grid<SwarmNode> grid = gridFactory.createGrid(50, 50, SwarmNode.class);
+    public List<SwarmNode> findPath(SwarmNode startSwarmNode, SwarmNode endSwarmNode, List<SwarmNode> obstacles, int height, int width) {
+        Grid<SwarmNode> grid = gridFactory.createGrid(width, height, SwarmNode.class);
         // Initialize the forward and backward queues
         Queue<SwarmNode> forwardQueue = new LinkedList<>();
         Queue<SwarmNode> backwardQueue = new LinkedList<>();

@@ -15,11 +15,11 @@ import java.util.*;
 public class BreadthFirstPathfinder {
     private final GridFactory gridFactory;
 
-    public List<BFSNode> findPath(BFSNode startBFSNode, BFSNode endBFSNode, List<BFSNode> obstacles) {
+    public List<BFSNode> findPath(BFSNode startBFSNode, BFSNode endBFSNode, List<BFSNode> obstacles, int height, int width) {
         Queue<BFSNode> queue = new LinkedList<>();
         Set<BFSNode> visited = new HashSet<>();
         Map<BFSNode, BFSNode> parents = new HashMap<>();
-        Grid<BFSNode> grid = gridFactory.createGrid(50, 50, BFSNode.class);
+        Grid<BFSNode> grid = gridFactory.createGrid(width, height, BFSNode.class);
 
         if (obstacles != null) {
             for (BFSNode obstacle : obstacles) {

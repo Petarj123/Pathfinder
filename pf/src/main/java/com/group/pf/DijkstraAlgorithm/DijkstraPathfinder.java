@@ -1,11 +1,8 @@
 package com.group.pf.DijkstraAlgorithm;
 
-import com.group.pf.AStarAlgorithm.AStarNode;
-import com.group.pf.BreadthFirstAlgorithm.BFSNode;
 import com.group.pf.main.Grid;
 import com.group.pf.main.GridFactory;
 import com.group.pf.main.Node;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -18,10 +15,10 @@ import java.util.*;
 public class DijkstraPathfinder {
     private final GridFactory gridFactory;
 
-    public List<DijkstraNode> findPath(DijkstraNode startDijkstraNode, DijkstraNode endDijkstraNode, List<DijkstraNode> obstacles) {
+    public List<DijkstraNode> findPath(DijkstraNode startDijkstraNode, DijkstraNode endDijkstraNode, List<DijkstraNode> obstacles, int height, int width) {
         PriorityQueue<DijkstraNode> queue = new PriorityQueue<>();
         Set<DijkstraNode> visited = new HashSet<>();
-        Grid<DijkstraNode> grid = gridFactory.createGrid(50, 50, DijkstraNode.class);
+        Grid<DijkstraNode> grid = gridFactory.createGrid(width, height, DijkstraNode.class);
 
         // Set obstacles
         if (obstacles != null) {
