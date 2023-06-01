@@ -228,40 +228,39 @@ function visualize() {
 }
 
 function clearGrid() {
-  setTimeout(function() {
-    // Reset start nodes
-    var startNodes = document.getElementsByClassName('start');
-    for (var i = 0; i < startNodes.length; i++) {
-      var node = startNodes[i];
-      node.style.backgroundColor = 'white';
-      node.setAttribute('data-isStart', 'false');
-    }
+  // Reset start nodes
+  var startNodes = document.getElementsByClassName('start');
+  for (var i = 0; i < startNodes.length; i++) {
+    var node = startNodes[i];
+    node.style.backgroundColor = 'white';
+    node.setAttribute('data-isStart', 'false');
+  }
 
-    // Reset end nodes
-    var endNodes = document.getElementsByClassName('end');
-    for (var i = 0; i < endNodes.length; i++) {
-      var node = endNodes[i];
-      node.style.backgroundColor = 'white';
-      node.setAttribute('data-isEnd', 'false');
-    }
+  // Reset end nodes
+  var endNodes = document.getElementsByClassName('end');
+  for (var i = 0; i < endNodes.length; i++) {
+    var node = endNodes[i];
+    node.style.backgroundColor = 'white';
+    node.setAttribute('data-isEnd', 'false');
+  }
 
-    // Reset obstacle nodes
-    var obstacleNodes = document.getElementsByClassName('obstacle');
-    for (var i = 0; i < obstacleNodes.length; i++) {
-      var node = obstacleNodes[i];
-      node.style.backgroundColor = 'white';
-      node.setAttribute('data-isObstacle', 'false');
-    }
+  // Reset obstacle nodes
+  var obstacleNodes = document.getElementsByClassName('obstacle');
+  for (var i = 0; i < obstacleNodes.length; i++) {
+    var node = obstacleNodes[i];
+    node.style.backgroundColor = 'white';
+    node.setAttribute('data-isObstacle', 'false');
+  }
 
-    // Reset path nodes
-    var pathNodes = document.getElementsByClassName('path');
-    for (var i = 0; i < pathNodes.length; i++) {
-      var node = pathNodes[i];
-      node.style.backgroundColor = 'white';
-      node.setAttribute('data-isPath', 'false');
-    }
-  }, 0);
+  // Reset path nodes
+  var pathNodes = document.getElementsByClassName('path');
+  for (var i = 0; i < pathNodes.length; i++) {
+    var node = pathNodes[i];
+    node.style.backgroundColor = 'white';
+    node.setAttribute('data-isPath', 'false');
+  }
 }
+
 function clearPath() {
   var pathNodes = document.getElementsByClassName('path');
 
@@ -269,19 +268,21 @@ function clearPath() {
     var node = pathNodes[i];
     var isStart = node.getAttribute('data-isStart');
     var isEnd = node.getAttribute('data-isEnd');
+    var isObstacle = node.getAttribute('data-isObstacle');
 
-    if (isStart !== 'true' && isEnd !== 'true') {
-      // Reset the background color and data attribute only for non-start and non-end nodes
+    if (isStart !== 'true' && isEnd !== 'true' && isObstacle !== 'true') {
+      // Reset the background color and data attribute only for non-start, non-end, and non-obstacle nodes
       node.style.backgroundColor = 'white';
       node.setAttribute('data-isPath', 'false');
     }
   }
 }
 
+
 function clearMaze(){
   var pathNodes = document.getElementsByClassName('path');
   var obstacleNodes = document.getElementsByClassName('obstacle');
-  for(var i = 0; 1 < pathNodes.length; i++){
+  for(var i = 0; i < pathNodes.length; i++){
     var node = pathNodes[i];
     node.style.backgroundColor = 'white';
     node.setAttribute('data-isPath', 'false');
@@ -347,3 +348,32 @@ function createObstacles(mazeCoordinates) {
     }
   }
 }
+var isMouseDown = false;
+
+// Add event listener to the grid container for mouse events
+document.getElementById('grid-container').addEventListener('mousedown', function(event) {
+  if (event.button === 0) {
+    // Left mouse button is pressed
+    isMouseDown = true;
+  }
+});
+
+document.addEventListener('mouseup', function(event) {
+  if (event.button === 0) {
+    // Left mouse button is released
+    isMouseDown = false;
+  }
+});
+
+document.getElementById('grid-container').addEventListener('mousemove', function(event) {
+  if (isMouseDown) {
+    // Get the node being crossed by the cursor
+    var targetNode = event.target;
+
+    if (targetNode.classList.contains('grid-node')) {
+      // Create an obstacle on the target node
+      createObstacle(targetNode, targetNode.dataset.x, targetNode.dataset.y);
+    }
+  }
+});
+

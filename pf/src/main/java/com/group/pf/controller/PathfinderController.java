@@ -149,7 +149,7 @@ public class PathfinderController {
         List<SwarmNode> path = biDirectionalSwarmPathfinder.findPath(startNode, endNode, obstacleNodes, requestBody.height(), requestBody.width());
         return convertNodeToCoordinate(path);
     }
-
+    // TODO FIX THIS
     @PostMapping("/pathfinder/maze")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
