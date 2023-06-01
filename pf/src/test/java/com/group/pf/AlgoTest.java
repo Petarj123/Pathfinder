@@ -28,7 +28,7 @@ public class AlgoTest {
         AStarPathfinder pathfinder = new AStarPathfinder(gridFactory);
 
         // Find the path
-        List<AStarNode> path = pathfinder.findPath(startAStarNode, endAStarNode, null);
+        List<AStarNode> path = pathfinder.findPath(startAStarNode, endAStarNode, null, 50, 50);
 
         for (AStarNode node : path) {
             System.out.println("Node " + node.getX() + " " + node.getY());
@@ -47,7 +47,7 @@ public class AlgoTest {
         endAStarNode.setEnd(true);
 
         DijkstraPathfinder pathfinder = new DijkstraPathfinder(gridFactory);
-        List<DijkstraNode> path = pathfinder.findPath(startAStarNode, endAStarNode, null);
+        List<DijkstraNode> path = pathfinder.findPath(startAStarNode, endAStarNode, null, 50, 50);
         for (DijkstraNode node : path){
             if (node != null){
                 System.out.println("Node " + node.getX() + " " + node.getY());
@@ -66,7 +66,7 @@ public class AlgoTest {
         endAStarNode.setEnd(true);
 
         BreadthFirstPathfinder pathfinder = new BreadthFirstPathfinder(gridFactory);
-        List<BFSNode> path = pathfinder.findPath(startAStarNode, endAStarNode, null);
+        List<BFSNode> path = pathfinder.findPath(startAStarNode, endAStarNode, null, 50, 50);
         for (BFSNode node : path){
             if (node!= null){
                 System.out.println("Node " + node.getX() + " " + node.getY());

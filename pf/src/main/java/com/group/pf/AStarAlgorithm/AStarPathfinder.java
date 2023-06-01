@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+
 @Service
 @RequiredArgsConstructor
 public class AStarPathfinder {
@@ -18,7 +19,7 @@ public class AStarPathfinder {
         Set<AStarNode> closedSet = new HashSet<>();
 
         if (obstacles != null) {
-            for (AStarNode node : obstacles){
+            for (AStarNode node : obstacles) {
                 grid.setObstacle(node.getX(), node.getY(), true);
             }
         }
@@ -57,6 +58,7 @@ public class AStarPathfinder {
         }
         return Collections.emptyList();
     }
+
     private List<AStarNode> reconstructPath(AStarNode currentAStarNode) {
         List<AStarNode> path = new ArrayList<>();
         while (currentAStarNode != null) {
@@ -69,6 +71,7 @@ public class AStarPathfinder {
         Collections.reverse(path);
         return path;
     }
+
     private double calculateGScore(AStarNode parent, AStarNode current) {
         // Calculate and return the gScore based on the parent node and current node
         double distance = distance(parent, current);
@@ -81,6 +84,7 @@ public class AStarPathfinder {
         int dy = Math.abs(current.getY() - goal.getY());
         return Math.sqrt(dx * dx + dy * dy);
     }
+
     private double distance(AStarNode AStarNode1, AStarNode AStarNode2) {
         // Calculate and return the distance between two nodes
         int dx = Math.abs(AStarNode1.getX() - AStarNode2.getX());

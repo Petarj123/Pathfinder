@@ -5,12 +5,10 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.Objects;
-
 @Getter
 @Setter
 @ToString
-public class AStarNode extends Node implements Comparable<AStarNode>{
+public class AStarNode extends Node implements Comparable<AStarNode> {
     private double gScore;
     private double fScore;
     private double hScore;

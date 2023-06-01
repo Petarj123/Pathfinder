@@ -262,11 +262,88 @@ function clearGrid() {
     }
   }, 0);
 }
-function clearPath(){
+function clearPath() {
   var pathNodes = document.getElementsByClassName('path');
-  for(var i = 0; i < pathNodes.length; i++){
+
+  for (var i = 0; i < pathNodes.length; i++) {
+    var node = pathNodes[i];
+    var isStart = node.getAttribute('data-isStart');
+    var isEnd = node.getAttribute('data-isEnd');
+
+    if (isStart !== 'true' && isEnd !== 'true') {
+      // Reset the background color and data attribute only for non-start and non-end nodes
+      node.style.backgroundColor = 'white';
+      node.setAttribute('data-isPath', 'false');
+    }
+  }
+}
+
+function clearMaze(){
+  var pathNodes = document.getElementsByClassName('path');
+  var obstacleNodes = document.getElementsByClassName('obstacle');
+  for(var i = 0; 1 < pathNodes.length; i++){
     var node = pathNodes[i];
     node.style.backgroundColor = 'white';
     node.setAttribute('data-isPath', 'false');
+  }
+  for(var i = 0; i < obstacleNodes.length; i++){
+    var node = obstacleNodes[i];
+    node.style.backgroundColor = 'white';
+    node.setAttribute('data-isObstacle', 'false');
+  }
+}
+function generateMaze() {
+  clearMaze();
+  var startNode = document.querySelector('.start');
+  var endNode = document.querySelector('.end');
+
+  var requestBody = {
+    startNode: startNode,
+    endNode: endNode,
+    height: numOfRows,
+    width: numOfCols
+  };
+
+  fetch('http://localhost:8080/pathfinder/maze', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(requestBody),
+  })
+    .then(function (response) {
+      if (response.ok) {
+        // Request successful, parse the response
+        return response.json();
+      } else {
+        // Request failed, handle the error
+        throw new Error('Maze generation request failed');
+      }
+    })
+    .then(function (mazeCoordinates) {
+      // Create obstacles using the received coordinates
+      createObstacles(mazeCoordinates);
+
+      console.log('Maze generation request successful');
+    })
+    .catch(function (error) {
+      // Request or parsing failed, handle the error
+      console.error('Maze generation request failed', error);
+    });
+}
+
+function createObstacles(mazeCoordinates) {
+  var startNode = document.querySelector('.start');
+  var endNode = document.querySelector('.end');
+
+  for (var i = 0; i < mazeCoordinates.length; i++) {
+    var coordinate = mazeCoordinates[i];
+    var node = document.querySelector(
+      '[data-x="' + coordinate.x + '"][data-y="' + coordinate.y + '"]'
+    );
+    
+    if (node && !node.classList.contains('start') && !node.classList.contains('end')) {
+      createObstacle(node, coordinate.x, coordinate.y);
+    }
   }
 }

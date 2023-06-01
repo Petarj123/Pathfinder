@@ -41,7 +41,7 @@ public class DijkstraPathfinder {
 
             for (Node neighborNode : currentDijkstraNode.getNeighbors(grid)) {
                 DijkstraNode neighbor = (DijkstraNode) neighborNode;
-                if (neighbor.isObstacle()){
+                if (neighbor.isObstacle()) {
                     System.out.println(neighbor);
                 }
                 if (!visited.contains(neighbor) && !neighbor.isObstacle()) {

@@ -4,15 +4,15 @@ import com.group.pf.AStarAlgorithm.AStarNode;
 import com.group.pf.AStarAlgorithm.AStarPathfinder;
 import com.group.pf.BreadthFirstAlgorithm.BFSNode;
 import com.group.pf.BreadthFirstAlgorithm.BreadthFirstPathfinder;
-import com.group.pf.BreadthFirstAlgorithm.DepthFirstPathfinder;
 import com.group.pf.DTO.Coordinates;
+import com.group.pf.DTO.MazeRequest;
 import com.group.pf.DTO.PathfinderRequest;
 import com.group.pf.DijkstraAlgorithm.DijkstraNode;
 import com.group.pf.DijkstraAlgorithm.DijkstraPathfinder;
 import com.group.pf.Swarm.BiDirectionalSwarmPathfinder;
 import com.group.pf.Swarm.SwarmNode;
-import com.group.pf.main.Grid;
 import com.group.pf.main.GridFactory;
+import com.group.pf.main.Maze;
 import com.group.pf.main.Node;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,23 +29,19 @@ public class PathfinderController {
     private final AStarPathfinder aStarPathfinder;
     private final DijkstraPathfinder dijkstraPathfinder;
     private final BreadthFirstPathfinder breadthFirstPathfinder;
-    private final DepthFirstPathfinder depthFirstPathfinder;
     private final BiDirectionalSwarmPathfinder biDirectionalSwarmPathfinder;
+    private final Maze maze;
 
     @GetMapping("/home")
     public String home(Model model) {
-        Grid<Node> grid = gridFactory.createGrid(25, 52, Node.class);
         AStarPathfinder aStarPathfinder = new AStarPathfinder(gridFactory);
         DijkstraPathfinder dijkstraPathfinder = new DijkstraPathfinder(gridFactory);
         BreadthFirstPathfinder breadthFirstPathfinder = new BreadthFirstPathfinder(gridFactory);
-        DepthFirstPathfinder depthFirstPathfinder = new DepthFirstPathfinder(gridFactory);
         BiDirectionalSwarmPathfinder biDirectionalSwarmPathfinder = new BiDirectionalSwarmPathfinder(gridFactory);
 
-        model.addAttribute("grid", grid.getGrid());
         model.addAttribute("AStar Algorithm", aStarPathfinder);
         model.addAttribute("Dijkstra Algorithm", dijkstraPathfinder);
         model.addAttribute("Breadth First Algorithm", breadthFirstPathfinder);
-        model.addAttribute("Depth First Algorithm", depthFirstPathfinder);
         model.addAttribute("Bidirectional Swarm Algorithm", biDirectionalSwarmPathfinder);
         return "pathfinder";
     }
@@ -75,6 +71,7 @@ public class PathfinderController {
         System.out.println(path);
         return convertNodeToCoordinate(path);
     }
+
     @PostMapping("/pathfinder/dijkstra")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -101,6 +98,7 @@ public class PathfinderController {
         System.out.println(path);
         return convertNodeToCoordinate(path);
     }
+
     @PostMapping("/pathfinder/breadthFirst")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -118,39 +116,15 @@ public class PathfinderController {
         endNode.setEnd(true);
 
         List<BFSNode> obstacleNodes = obstacleCoords.stream()
-               .map(coordinates -> new BFSNode(coordinates.x(), coordinates.y()))
-               .toList();
+                .map(coordinates -> new BFSNode(coordinates.x(), coordinates.y()))
+                .toList();
         setObstacles(obstacleNodes);
 
         List<BFSNode> path = breadthFirstPathfinder.findPath(startNode, endNode, obstacleNodes, requestBody.height(), requestBody.width());
         System.out.println(path);
         return convertNodeToCoordinate(path);
     }
-    @PostMapping("/pathfinder/depthFirst")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public List<Coordinates> findPathDepthFirst(@RequestBody PathfinderRequest requestBody) {
-        List<Coordinates> startCoords = requestBody.start();
-        List<Coordinates> endCoords = requestBody.end();
-        List<Coordinates> obstacleCoords = requestBody.obstacles();
 
-        Coordinates startCoord = startCoords.get(0);
-        Coordinates endCoord = endCoords.get(0);
-
-        BFSNode startNode = new BFSNode(startCoord.x(), startCoord.y());
-        BFSNode endNode = new BFSNode(endCoord.x(), endCoord.y());
-        startNode.setStart(true);
-        endNode.setEnd(true);
-
-        List<BFSNode> obstacleNodes = obstacleCoords.stream()
-                .map(coordinates -> new BFSNode(coordinates.x(), coordinates.y()))
-                .toList();
-        setObstacles(obstacleNodes);
-
-        List<BFSNode> path = depthFirstPathfinder.findPath(startNode, endNode, obstacleNodes, requestBody.height(), requestBody.width());
-        System.out.println(path);
-        return convertNodeToCoordinate(path);
-    }
     @PostMapping("/pathfinder/biDirectionalSwarm")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -168,19 +142,33 @@ public class PathfinderController {
         endNode.setEnd(true);
 
         List<SwarmNode> obstacleNodes = obstacleCoords.stream()
-              .map(coordinates -> new SwarmNode(coordinates.x(), coordinates.y()))
-              .toList();
+                .map(coordinates -> new SwarmNode(coordinates.x(), coordinates.y()))
+                .toList();
         setObstacles(obstacleNodes);
 
         List<SwarmNode> path = biDirectionalSwarmPathfinder.findPath(startNode, endNode, obstacleNodes, requestBody.height(), requestBody.width());
         return convertNodeToCoordinate(path);
     }
-    private void setObstacles(List<? extends Node> obstacles){
-        for (Node node : obstacles){
+
+    @PostMapping("/pathfinder/maze")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<Coordinates> generateMaze(@RequestBody MazeRequest requestBody) {
+        Node startNode = new Node(requestBody.startNode().x(), requestBody.startNode().y());
+        Node endNode = new Node(requestBody.endNode().x(), requestBody.endNode().y());
+        startNode.setStart(true);
+        endNode.setEnd(true);
+        System.out.println(maze.generateMaze(startNode, endNode, requestBody.height(), requestBody.width()));
+        return maze.generateMaze(startNode, endNode, requestBody.height(), requestBody.width());
+    }
+
+    private void setObstacles(List<? extends Node> obstacles) {
+        for (Node node : obstacles) {
             node.setObstacle(true);
         }
     }
-    private List<Coordinates> convertNodeToCoordinate(List<? extends Node> path){
+
+    private List<Coordinates> convertNodeToCoordinate(List<? extends Node> path) {
         return path.stream()
                 .map(node -> new Coordinates(node.getX(), node.getY()))
                 .toList();

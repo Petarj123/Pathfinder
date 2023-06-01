@@ -8,7 +8,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class DijkstraNode extends Node implements Comparable<DijkstraNode>{
+public class DijkstraNode extends Node implements Comparable<DijkstraNode> {
     private int distance;
 
     public DijkstraNode(int x, int y) {

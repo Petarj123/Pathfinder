@@ -32,7 +32,7 @@ public class BreadthFirstPathfinder {
 
         while (!queue.isEmpty()) {
             BFSNode currentBFSNode = queue.poll();
-            if (currentBFSNode.isObstacle()){
+            if (currentBFSNode.isObstacle()) {
                 System.out.printf("Node %s %s", currentBFSNode.getX(), currentBFSNode.getY());
             }
             if (currentBFSNode.equals(endBFSNode)) {

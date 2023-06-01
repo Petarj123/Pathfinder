@@ -1,6 +1,5 @@
 package com.group.pf.Swarm;
 
-import com.group.pf.BreadthFirstAlgorithm.BFSNode;
 import com.group.pf.main.Grid;
 import com.group.pf.main.GridFactory;
 import com.group.pf.main.Node;

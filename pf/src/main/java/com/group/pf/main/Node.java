@@ -25,6 +25,7 @@ public class Node {
         this.isPath = false;
         this.previous = null;
     }
+
     public List<Node> getNeighbors(Grid grid) {
         List<Node> neighbors = new ArrayList<>();
 

@@ -2,19 +2,18 @@ package com.group.pf.main;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 
 @Getter
 @Setter
-public class Grid<T extends Node>{
+public class Grid<T extends Node> {
     private Class<T> nodeClass;
     private T[][] grid;
     private int width;
     private int height;
+
     @SuppressWarnings("unchecked")
     public Grid(int width, int height, Class<T> nodeClass) {
         this.width = width;
@@ -25,7 +24,7 @@ public class Grid<T extends Node>{
     }
 
     private void initializeGrid() {
-        for(int x = 0; x < width; x++) {
+        for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 grid[x][y] = createNode(x, y);
             }
@@ -37,7 +36,7 @@ public class Grid<T extends Node>{
     }
 
     public T getNode(int x, int y) {
-        if (isWithinBounds(x, y)){
+        if (isWithinBounds(x, y)) {
             return grid[x][y];
         } else {
             return null;
@@ -54,7 +53,7 @@ public class Grid<T extends Node>{
         }
     }
 
-    protected boolean isWithinBounds(int x, int y){
+    protected boolean isWithinBounds(int x, int y) {
         return x >= 0 && x < width && y >= 0 && y < height;
     }
 }

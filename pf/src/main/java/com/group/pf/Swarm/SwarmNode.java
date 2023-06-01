@@ -9,7 +9,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class SwarmNode extends Node implements Comparable<SwarmNode>{
+public class SwarmNode extends Node implements Comparable<SwarmNode> {
 
     private int distanceToStart;
     private int distanceToEnd;
@@ -24,6 +24,7 @@ public class SwarmNode extends Node implements Comparable<SwarmNode>{
     public int compareTo(SwarmNode o) {
         return Integer.compare(this.distanceToStart + this.distanceToEnd, o.distanceToStart + o.distanceToEnd);
     }
+
     public void calculateDistanceToStart(SwarmNode startSwarmNode) {
         this.distanceToStart = calculateDistance(startSwarmNode);
     }
