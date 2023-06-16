@@ -92,31 +92,25 @@ public class BiDirectionalSwarmPathfinder {
     private List<SwarmNode> reconstructPath(Map<SwarmNode, SwarmNode> forwardParents, Map<SwarmNode, SwarmNode> backwardParents, SwarmNode meetingSwarmNode) {
         List<SwarmNode> forwardPath = new ArrayList<>();
         List<SwarmNode> backwardPath = new ArrayList<>();
-
         // Reconstruct the forward path
         SwarmNode forwardCurrent = meetingSwarmNode;
         while (forwardCurrent != null) {
             forwardPath.add(forwardCurrent);
             forwardCurrent = forwardParents.get(forwardCurrent);
         }
-
         // Reconstruct the backward path
         SwarmNode backwardCurrent = meetingSwarmNode;
         while (backwardCurrent != null) {
             backwardPath.add(backwardCurrent);
             backwardCurrent = backwardParents.get(backwardCurrent);
         }
-
-        // Reverse the backward path (excluding the meeting node)
+        // Reverse the backward path (excluding the meeting node) in-place
         Collections.reverse(backwardPath.subList(1, backwardPath.size()));
-
         // Combine the forward and backward paths
-        forwardPath.addAll(backwardPath);
+        forwardPath.addAll(backwardPath.subList(1, backwardPath.size()));
         for (SwarmNode swarmNode : forwardPath) {
             swarmNode.setPath(true);
         }
         return forwardPath;
     }
-
-
 }
