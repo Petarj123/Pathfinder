@@ -58,6 +58,25 @@
   background-color: white;
   margin: 0;
   padding: 0;
+  transition: background-color 0.3s ease;
+}
+.grid-node[data-isStart="true"] {
+  background-color: green;
+}
+
+.grid-node[data-isEnd="true"] {
+  background-color: red;
+}
+
+.grid-node[data-isObstacle="true"] {
+  background-color: black;
+}
+
+.grid-node[data-isPath="true"] {
+  background-color: yellow;
+}
+.grid-node:hover {
+  background-color: #eee;
 }
 @media screen and (min-width: 768px) {
   .grid-node {
