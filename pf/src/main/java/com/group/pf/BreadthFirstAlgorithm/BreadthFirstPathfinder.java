@@ -5,7 +5,6 @@ import com.group.pf.main.GridFactory;
 import com.group.pf.main.Node;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -13,19 +12,13 @@ import java.util.*;
 @Component
 @Data
 @RequiredArgsConstructor
-@Log4j2
 public class BreadthFirstPathfinder {
     private final GridFactory gridFactory;
 
     public List<BFSNode> findPath(BFSNode startBFSNode, BFSNode endBFSNode, List<BFSNode> obstacles, int height, int width) {
-        if (startBFSNode == null || endBFSNode == null || height <= 0 || width <= 0) {
-            throw new IllegalArgumentException("Invalid input parameters");
-        }
-
-        Queue<BFSNode> queue = new ArrayDeque<>();
-        BitSet visited = new BitSet(height * width);
-        int[] parents = new int[height * width];
-        Arrays.fill(parents, -1);
+        Queue<BFSNode> queue = new LinkedList<>();
+        Set<BFSNode> visited = new HashSet<>();
+        Map<BFSNode, BFSNode> parents = new HashMap<>();
         Grid<BFSNode> grid = gridFactory.createGrid(width, height, BFSNode.class);
 
         if (obstacles != null) {
@@ -33,48 +26,45 @@ public class BreadthFirstPathfinder {
                 grid.setObstacle(obstacle.getX(), obstacle.getY(), true);
             }
         }
-        int startIdx = startBFSNode.getX() + startBFSNode.getY() * width;
-        int endIdx = endBFSNode.getX() + endBFSNode.getY() * width;
+
         queue.offer(startBFSNode);
-        visited.set(startIdx);
+        visited.add(startBFSNode);
 
         while (!queue.isEmpty()) {
             BFSNode currentBFSNode = queue.poll();
-            int currentIdx = currentBFSNode.getX() + currentBFSNode.getY() * width;
             if (currentBFSNode.isObstacle()) {
-                log.debug("Node {} {}", currentBFSNode.getX(), currentBFSNode.getY());
+                System.out.printf("Node %s %s", currentBFSNode.getX(), currentBFSNode.getY());
             }
-            if (currentIdx == endIdx) {
-                return reconstructPath(parents, endBFSNode, width);
+            if (currentBFSNode.equals(endBFSNode)) {
+                return reconstructPath(parents, endBFSNode);
             }
 
             for (Node neighborNode : currentBFSNode.getNeighbors(grid)) {
                 BFSNode neighbor = (BFSNode) neighborNode;
-                int neighborIdx = neighbor.getX() + neighbor.getY() * width;
-                if (!visited.get(neighborIdx) && !neighbor.isObstacle()) {
+                if (!visited.contains(neighbor) && !neighbor.isObstacle()) {
                     queue.offer(neighbor);
-                    visited.set(neighborIdx);
-                    parents[neighborIdx] = currentIdx;
+                    visited.add(neighbor);
+                    parents.put(neighbor, currentBFSNode); // Add to parents only if it's not an obstacle
                 }
             }
         }
         return Collections.emptyList();
     }
 
-    private List<BFSNode> reconstructPath(int[] parents, BFSNode endBFSNode, int width) {
+    private List<BFSNode> reconstructPath(Map<BFSNode, BFSNode> parents, BFSNode endBFSNode) {
         List<BFSNode> path = new ArrayList<>();
         BFSNode current = endBFSNode;
+
         while (current != null) {
             path.add(current);
-            int currentIdx = current.getX() + current.getY() * width;
-            current = parents[currentIdx] == -1 ? null : new BFSNode(parents[currentIdx] % width, parents[currentIdx] / width);
+            current = parents.get(current);
         }
-        for (BFSNode bfsNode : path) {
-            bfsNode.setPath(true);
+
+        for (BFSNode node : path) {
+            node.setPath(true);
         }
-        for (int i = 0, j = path.size() - 1; i < j; i++, j--) {
-            Collections.swap(path, i, j);
-        }
+
+        Collections.reverse(path);
         return path;
     }
 

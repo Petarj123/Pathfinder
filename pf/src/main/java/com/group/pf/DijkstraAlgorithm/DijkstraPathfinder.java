@@ -14,34 +14,39 @@ import java.util.*;
 @RequiredArgsConstructor
 public class DijkstraPathfinder {
     private final GridFactory gridFactory;
+
     public List<DijkstraNode> findPath(DijkstraNode startDijkstraNode, DijkstraNode endDijkstraNode, List<DijkstraNode> obstacles, int height, int width) {
-        if (startDijkstraNode == null || endDijkstraNode == null || height <= 0 || width <= 0) {
-            throw new IllegalArgumentException("Invalid input parameters");
-        }
         PriorityQueue<DijkstraNode> queue = new PriorityQueue<>();
-        boolean[][] visited = new boolean[height][width];
+        Set<DijkstraNode> visited = new HashSet<>();
         Grid<DijkstraNode> grid = gridFactory.createGrid(width, height, DijkstraNode.class);
+
         // Set obstacles
         if (obstacles != null) {
             for (DijkstraNode node : obstacles) {
                 grid.setObstacle(node.getX(), node.getY(), true);
             }
         }
+
         startDijkstraNode.setDistance(0);
         queue.offer(startDijkstraNode);
+
         while (!queue.isEmpty()) {
             DijkstraNode currentDijkstraNode = queue.poll();
+
             if (currentDijkstraNode.equals(endDijkstraNode)) {
                 return reconstructPath(currentDijkstraNode); // Return the reconstructed path
             }
-            visited[currentDijkstraNode.getY()][currentDijkstraNode.getX()] = true;
+
+            visited.add(currentDijkstraNode);
+
             for (Node neighborNode : currentDijkstraNode.getNeighbors(grid)) {
                 DijkstraNode neighbor = (DijkstraNode) neighborNode;
                 if (neighbor.isObstacle()) {
                     System.out.println(neighbor);
                 }
-                if (!visited[neighbor.getY()][neighbor.getX()] && !neighbor.isObstacle()) {
+                if (!visited.contains(neighbor) && !neighbor.isObstacle()) {
                     int distance = currentDijkstraNode.getDistance() + 1;
+
                     if (distance < neighbor.getDistance()) {
                         neighbor.setDistance(distance);
                         neighbor.setPrevious(currentDijkstraNode);
@@ -50,16 +55,25 @@ public class DijkstraPathfinder {
                 }
             }
         }
+
         return Collections.emptyList(); // Return an empty list if no path is found
     }
+
+
     private List<DijkstraNode> reconstructPath(DijkstraNode endDijkstraNode) {
         List<DijkstraNode> path = new ArrayList<>();
         DijkstraNode current = endDijkstraNode;
-        while (current != null) {
+        System.out.println("Current node: " + current.getX() + " " + current.getY());
+        while (current.getPrevious() != null) {
             path.add(current);
-            current.setPath(true);
             current = (DijkstraNode) current.getPrevious();
         }
+        path.add(current);
+
+        for (DijkstraNode dijkstraNode : path) {
+            dijkstraNode.setPath(true);
+        }
+
         Collections.reverse(path);
         return path;
     }
