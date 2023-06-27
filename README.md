@@ -1,9 +1,11 @@
 # Pathfinder
 
 Description
+
 Pathfinder Visualizer is a tool for visualizing and understanding various pathfinding algorithms. The application allows users to create their own grid-based maps and run different algorithms on them. Current algorithms supported are Dijkstra's Algorithm, A* Search, Bidirectional Swarm, and Breadth-First Search.
 
 Usage
+
 Follow the instructions below to interact with the Pathfinder Visualizer:
 
 Draw walls on the grid by clicking and dragging your mouse.
@@ -12,6 +14,7 @@ Create an end node by pressing Ctrl + MB1.
 Choose your preferred pathfinding algorithm from the selection menu: Dijkstra's Algorithm, A* Search, Bidirectional Swarm, or Breadth-First Search.
 
 Algorithms
+
 Dijkstra's Algorithm
 This is a classic algorithm for finding the shortest path between two nodes. It's guaranteed to find a shortest path if one exists.
 
