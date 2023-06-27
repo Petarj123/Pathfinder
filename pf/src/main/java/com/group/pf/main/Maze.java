@@ -11,30 +11,22 @@ import java.util.*;
 public class Maze {
     private final GridFactory gridFactory;
 
-    public List<Coordinates> generateMaze(Node startNode, Node endNode, int height, int width) {
+    public List<Coordinates> generateMaze(int height, int width) {
         Grid<Node> grid = gridFactory.createGrid(width, height, Node.class);
         List<Node> stack = new ArrayList<>();
         Set<Node> visitedNodes = new HashSet<>();
-
         // Initialize the grid with walls
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 grid.getNode(x, y).setObstacle(true);
             }
         }
-
-        // Set the start and end nodes as non-obstacles
-        startNode.setObstacle(false);
-        endNode.setObstacle(false);
-
         // Recursive Backtracking Algorithm
-        Node current = startNode;
+        Node current = grid.getNode(0, 0);
         stack.add(current);
-
         while (!stack.isEmpty()) {
             visitedNodes.add(current);
             List<Node> unvisitedNeighbors = getUnvisitedNeighbors(current, grid, visitedNodes);
-
             if (!unvisitedNeighbors.isEmpty()) {
                 Node next = unvisitedNeighbors.get(new Random().nextInt(unvisitedNeighbors.size()));
                 removeWallBetweenNodes(current, next, grid);
@@ -44,7 +36,6 @@ public class Maze {
                 current = stack.remove(stack.size() - 1);
             }
         }
-
         // Convert maze nodes to coordinates
         List<Coordinates> mazeCoordinates = new ArrayList<>();
         for (int x = 0; x < width; x++) {
@@ -54,7 +45,6 @@ public class Maze {
                 }
             }
         }
-
         return mazeCoordinates;
     }
 

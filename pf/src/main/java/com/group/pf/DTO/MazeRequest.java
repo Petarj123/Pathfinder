@@ -1,4 +1,4 @@
 package com.group.pf.DTO;
 
-public record MazeRequest(Coordinates startNode, Coordinates endNode, int height, int width) {
+public record MazeRequest(int height, int width) {
 }

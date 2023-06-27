@@ -154,12 +154,8 @@ public class PathfinderController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<Coordinates> generateMaze(@RequestBody MazeRequest requestBody) {
-        Node startNode = new Node(requestBody.startNode().x(), requestBody.startNode().y());
-        Node endNode = new Node(requestBody.endNode().x(), requestBody.endNode().y());
-        startNode.setStart(true);
-        endNode.setEnd(true);
-        System.out.println(maze.generateMaze(startNode, endNode, requestBody.height(), requestBody.width()));
-        return maze.generateMaze(startNode, endNode, requestBody.height(), requestBody.width());
+        System.out.println(maze.generateMaze(requestBody.height(), requestBody.width()));
+        return maze.generateMaze(requestBody.height(), requestBody.width());
     }
 
     private void setObstacles(List<? extends Node> obstacles) {

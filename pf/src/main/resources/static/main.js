@@ -4,15 +4,13 @@ var endNode = null;
 var gridContainer = document.getElementById('grid-container');
 var containerWidth = gridContainer.offsetWidth;
 var containerHeight = gridContainer.offsetHeight;
-var nodeSize = 20; // Change the desired node size as needed
+var nodeSize = 30; // Change the desired node size as needed
 
 // Calculate the number of rows and columns based on the container size and node size
-var numOfRows = Math.floor(containerHeight / nodeSize);
-var numOfCols = Math.floor(containerWidth / nodeSize);
+var numOfRows = 24;
+var numOfCols = 55;
 
 function createDynamicGrid() {
-  
-
   // Clear the grid container
   gridContainer.innerHTML = '';
 
@@ -43,12 +41,7 @@ function createDynamicGrid() {
   gridContainer.appendChild(table);
 }
 
-// Call the function to create the grid initially
 createDynamicGrid();
-
-// Add an event listener to window resize to recreate the grid dynamically when the screen size changes
-window.addEventListener('resize', createDynamicGrid);
-
 
 function toggleNodes(element, event) {
     var x = parseInt(element.getAttribute('data-x'));
@@ -235,27 +228,23 @@ function clearGrid() {
     node.style.backgroundColor = 'white';
     node.setAttribute('data-isStart', 'false');
   }
-
-  // Reset end nodes
+   // Reset end nodes
   var endNodes = document.getElementsByClassName('end');
   for (var i = 0; i < endNodes.length; i++) {
     var node = endNodes[i];
     node.style.backgroundColor = 'white';
     node.setAttribute('data-isEnd', 'false');
   }
-
-  // Reset obstacle nodes
+   // Reset obstacle nodes
   var obstacleNodes = document.getElementsByClassName('obstacle');
   for (var i = 0; i < obstacleNodes.length; i++) {
     var node = obstacleNodes[i];
     node.style.backgroundColor = 'white';
     node.setAttribute('data-isObstacle', 'false');
   }
-
-  // Reset path nodes
-  var pathNodes = document.getElementsByClassName('path');
-  for (var i = 0; i < pathNodes.length; i++) {
-    var node = pathNodes[i];
+  var pathNode = document.getElementsByClassName('path');
+  for (var i = 0; i < pathNode.length; i++) {
+    var node = pathNode[i];
     node.style.backgroundColor = 'white';
     node.setAttribute('data-isPath', 'false');
   }
@@ -280,31 +269,27 @@ function clearPath() {
 
 
 function clearMaze(){
-  var pathNodes = document.getElementsByClassName('path');
   var obstacleNodes = document.getElementsByClassName('obstacle');
-  for(var i = 0; i < pathNodes.length; i++){
-    var node = pathNodes[i];
-    node.style.backgroundColor = 'white';
-    node.setAttribute('data-isPath', 'false');
-  }
-  for(var i = 0; i < obstacleNodes.length; i++){
-    var node = obstacleNodes[i];
-    node.style.backgroundColor = 'white';
-    node.setAttribute('data-isObstacle', 'false');
-  }
+    for (var i = 0; i < obstacleNodes.length; i++) {
+      var node = obstacleNodes[i];
+      node.style.backgroundColor = 'white';
+      node.setAttribute('data-isObstacle', 'false');
+    }
+    var pathNode = document.getElementsByClassName('path');
+    for (var i = 0; i < pathNode.length; i++) {
+      var node = pathNode[i];
+      node.style.backgroundColor = 'white';
+      node.setAttribute('data-isPath', 'false');
+    }
 }
+// TODO: FIX THIS
 function generateMaze() {
-  clearMaze();
-  var startNode = document.querySelector('.start');
-  var endNode = document.querySelector('.end');
+  clearGrid();
 
   var requestBody = {
-    startNode: startNode,
-    endNode: endNode,
     height: numOfRows,
     width: numOfCols
   };
-
   fetch('http://localhost:8080/pathfinder/maze', {
     method: 'POST',
     headers: {
@@ -334,16 +319,12 @@ function generateMaze() {
 }
 
 function createObstacles(mazeCoordinates) {
-  var startNode = document.querySelector('.start');
-  var endNode = document.querySelector('.end');
-
   for (var i = 0; i < mazeCoordinates.length; i++) {
     var coordinate = mazeCoordinates[i];
     var node = document.querySelector(
       '[data-x="' + coordinate.x + '"][data-y="' + coordinate.y + '"]'
     );
-    
-    if (node && !node.classList.contains('start') && !node.classList.contains('end')) {
+     if (node && !node.classList.contains('start') && !node.classList.contains('end')) {
       createObstacle(node, coordinate.x, coordinate.y);
     }
   }
