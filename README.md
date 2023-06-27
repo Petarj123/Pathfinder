@@ -9,8 +9,11 @@ Usage
 Follow the instructions below to interact with the Pathfinder Visualizer:
 
 Draw walls on the grid by clicking and dragging your mouse.
+
 Create a start node by pressing Shift + MB1.
+
 Create an end node by pressing Ctrl + MB1.
+
 Choose your preferred pathfinding algorithm from the selection menu: Dijkstra's Algorithm, A* Search, Bidirectional Swarm, or Breadth-First Search.
 
 Algorithms
