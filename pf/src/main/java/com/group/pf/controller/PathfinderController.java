@@ -5,6 +5,8 @@ import com.group.pf.AStarAlgorithm.AStarPathfinder;
 import com.group.pf.BreadthFirstAlgorithm.BFSNode;
 import com.group.pf.BreadthFirstAlgorithm.BreadthFirstPathfinder;
 import com.group.pf.DTO.*;
+import com.group.pf.DepthFirstAlgorithm.DFSNode;
+import com.group.pf.DepthFirstAlgorithm.DepthFirstPathfinder;
 import com.group.pf.DijkstraAlgorithm.DijkstraNode;
 import com.group.pf.DijkstraAlgorithm.DijkstraPathfinder;
 import com.group.pf.Swarm.BiDirectionalSwarmPathfinder;
@@ -19,6 +21,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -28,6 +31,7 @@ public class PathfinderController {
     private final DijkstraPathfinder dijkstraPathfinder;
     private final BreadthFirstPathfinder breadthFirstPathfinder;
     private final BiDirectionalSwarmPathfinder biDirectionalSwarmPathfinder;
+    private final DepthFirstPathfinder depthFirstPathfinder;
     private final Maze maze;
 
     @GetMapping("/home")
@@ -36,11 +40,12 @@ public class PathfinderController {
         DijkstraPathfinder dijkstraPathfinder = new DijkstraPathfinder(gridFactory);
         BreadthFirstPathfinder breadthFirstPathfinder = new BreadthFirstPathfinder(gridFactory);
         BiDirectionalSwarmPathfinder biDirectionalSwarmPathfinder = new BiDirectionalSwarmPathfinder(gridFactory);
-
+        DepthFirstPathfinder depthFirstPathfinder = new DepthFirstPathfinder(gridFactory);
         model.addAttribute("AStar Algorithm", aStarPathfinder);
         model.addAttribute("Dijkstra Algorithm", dijkstraPathfinder);
         model.addAttribute("Breadth First Algorithm", breadthFirstPathfinder);
         model.addAttribute("Bidirectional Swarm Algorithm", biDirectionalSwarmPathfinder);
+        model.addAttribute("Depth First Algorithm", depthFirstPathfinder);
         return "pathfinder";
     }
 
@@ -127,7 +132,33 @@ public class PathfinderController {
 
         return new PathfindingResult(pathCoords, visitedCoords);
     }
+    @PostMapping("/pathfinder/depthFirst")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public PathfindingResult findPathDepthFirst(@RequestBody PathfinderRequest requestBody) {
+        List<Coordinates> startCoords = requestBody.start();
+        List<Coordinates> endCoords = requestBody.end();
+        List<Coordinates> obstacleCoords = requestBody.obstacles();
 
+        Coordinates startCoord = startCoords.get(0);
+        Coordinates endCoord = endCoords.get(0);
+
+        DFSNode startNode = new DFSNode(startCoord.x(), startCoord.y());
+        DFSNode endNode = new DFSNode(endCoord.x(), endCoord.y());
+        startNode.setStart(true);
+        endNode.setEnd(true);
+
+        List<DFSNode> obstacleNodes = obstacleCoords.stream()
+                .map(coordinates -> new DFSNode(coordinates.x(), coordinates.y()))
+                .collect(Collectors.toList());
+
+        PathResult<DFSNode> pathResult = depthFirstPathfinder.findPath(startNode, endNode, obstacleNodes, requestBody.height(), requestBody.width());
+
+        List<Coordinates> pathCoords = convertNodeToCoordinate(pathResult.path());
+        List<Coordinates> visitedCoords = convertNodeToCoordinate(pathResult.visited());
+
+        return new PathfindingResult(pathCoords, visitedCoords);
+    }
     @PostMapping("/pathfinder/biDirectionalSwarm")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
