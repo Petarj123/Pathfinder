@@ -16,33 +16,32 @@ import java.util.*;
 public class BreadthFirstPathfinder {
     private final GridFactory gridFactory;
 
-    public PathResult<BFSNode> findPath(BFSNode startBFSNode, BFSNode endBFSNode, List<BFSNode> obstacles, int height, int width) {
-        Queue<BFSNode> queue = new LinkedList<>();
-        Set<BFSNode> visited = new LinkedHashSet<>();
-        Map<BFSNode, BFSNode> parents = new HashMap<>();
-        Grid<BFSNode> grid = gridFactory.createGrid(width, height, BFSNode.class);
+    public PathResult<Node> findPath(Node startNode, Node endNode, List<Node> obstacles, int height, int width) {
+        Queue<Node> queue = new LinkedList<>();
+        Set<Node> visited = new LinkedHashSet<>();
+        Map<Node, Node> parents = new HashMap<>();
+        Grid<Node> grid = gridFactory.createGrid(width, height, Node.class);
 
         if (obstacles != null) {
-            for (BFSNode obstacle : obstacles) {
+            for (Node obstacle : obstacles) {
                 grid.setObstacle(obstacle.getX(), obstacle.getY(), true);
             }
         }
 
-        queue.offer(startBFSNode);
-        visited.add(startBFSNode);
+        queue.offer(startNode);
+        visited.add(startNode);
 
         while (!queue.isEmpty()) {
-            BFSNode currentBFSNode = queue.poll();
-            if (currentBFSNode.equals(endBFSNode)) {
-                return new PathResult<>(reconstructPath(parents, endBFSNode), new ArrayList<>(visited));
+            Node currentNode = queue.poll();
+            if (currentNode.equals(endNode)) {
+                return new PathResult<>(reconstructPath(parents, endNode), new ArrayList<>(visited));
             }
 
-            for (Node neighborNode : currentBFSNode.getNeighbors(grid)) {
-                BFSNode neighbor = (BFSNode) neighborNode;
+            for (Node neighbor : currentNode.getNeighbors(grid)) {
                 if (!visited.contains(neighbor) && !neighbor.isObstacle()) {
                     queue.offer(neighbor);
                     visited.add(neighbor);
-                    parents.put(neighbor, currentBFSNode);
+                    parents.put(neighbor, currentNode);
                 }
             }
         }
@@ -50,16 +49,16 @@ public class BreadthFirstPathfinder {
         return new PathResult<>(Collections.emptyList(), new ArrayList<>(visited));
     }
 
-    private List<BFSNode> reconstructPath(Map<BFSNode, BFSNode> parents, BFSNode endBFSNode) {
-        List<BFSNode> path = new ArrayList<>();
-        BFSNode current = endBFSNode;
+    private List<Node> reconstructPath(Map<Node, Node> parents, Node endNode) {
+        List<Node> path = new ArrayList<>();
+        Node current = endNode;
 
         while (current != null) {
             path.add(current);
             current = parents.get(current);
         }
 
-        for (BFSNode node : path) {
+        for (Node node : path) {
             node.setPath(true);
         }
 

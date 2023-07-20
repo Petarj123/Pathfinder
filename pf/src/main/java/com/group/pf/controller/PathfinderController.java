@@ -2,10 +2,8 @@ package com.group.pf.controller;
 
 import com.group.pf.AStarAlgorithm.AStarNode;
 import com.group.pf.AStarAlgorithm.AStarPathfinder;
-import com.group.pf.BreadthFirstAlgorithm.BFSNode;
 import com.group.pf.BreadthFirstAlgorithm.BreadthFirstPathfinder;
 import com.group.pf.DTO.*;
-import com.group.pf.DepthFirstAlgorithm.DFSNode;
 import com.group.pf.DepthFirstAlgorithm.DepthFirstPathfinder;
 import com.group.pf.DijkstraAlgorithm.DijkstraNode;
 import com.group.pf.DijkstraAlgorithm.DijkstraPathfinder;
@@ -116,16 +114,16 @@ public class PathfinderController {
         Coordinates startCoord = startCoords.get(0);
         Coordinates endCoord = endCoords.get(0);
 
-        BFSNode startNode = new BFSNode(startCoord.x(), startCoord.y());
-        BFSNode endNode = new BFSNode(endCoord.x(), endCoord.y());
+        Node startNode = new Node(startCoord.x(), startCoord.y());
+        Node endNode = new Node(endCoord.x(), endCoord.y());
         startNode.setStart(true);
         endNode.setEnd(true);
 
-        List<BFSNode> obstacleNodes = obstacleCoords.stream()
-                .map(coordinates -> new BFSNode(coordinates.x(), coordinates.y()))
+        List<Node> obstacleNodes = obstacleCoords.stream()
+                .map(coordinates -> new Node(coordinates.x(), coordinates.y()))
                 .toList();
 
-        PathResult<BFSNode> pathResult = breadthFirstPathfinder.findPath(startNode, endNode, obstacleNodes, requestBody.height(), requestBody.width());
+        PathResult<Node> pathResult = breadthFirstPathfinder.findPath(startNode, endNode, obstacleNodes, requestBody.height(), requestBody.width());
 
         List<Coordinates> pathCoords = convertNodeToCoordinate(pathResult.path());
         List<Coordinates> visitedCoords = convertNodeToCoordinate(pathResult.visited());
@@ -143,16 +141,16 @@ public class PathfinderController {
         Coordinates startCoord = startCoords.get(0);
         Coordinates endCoord = endCoords.get(0);
 
-        DFSNode startNode = new DFSNode(startCoord.x(), startCoord.y());
-        DFSNode endNode = new DFSNode(endCoord.x(), endCoord.y());
+        Node startNode = new Node(startCoord.x(), startCoord.y());
+        Node endNode = new Node(endCoord.x(), endCoord.y());
         startNode.setStart(true);
         endNode.setEnd(true);
 
-        List<DFSNode> obstacleNodes = obstacleCoords.stream()
-                .map(coordinates -> new DFSNode(coordinates.x(), coordinates.y()))
+        List<Node> obstacleNodes = obstacleCoords.stream()
+                .map(coordinates -> new Node(coordinates.x(), coordinates.y()))
                 .collect(Collectors.toList());
 
-        PathResult<DFSNode> pathResult = depthFirstPathfinder.findPath(startNode, endNode, obstacleNodes, requestBody.height(), requestBody.width());
+        PathResult<Node> pathResult = depthFirstPathfinder.findPath(startNode, endNode, obstacleNodes, requestBody.height(), requestBody.width());
 
         List<Coordinates> pathCoords = convertNodeToCoordinate(pathResult.path());
         List<Coordinates> visitedCoords = convertNodeToCoordinate(pathResult.visited());
@@ -197,13 +195,13 @@ public class PathfinderController {
         return maze.generateMaze(requestBody.height(), requestBody.width());
     }
 
-    private void setObstacles(List<? extends Node> obstacles) {
-        for (Node node : obstacles) {
+    private void setObstacles(List<? extends com.group.pf.main.Node> obstacles) {
+        for (com.group.pf.main.Node node : obstacles) {
             node.setObstacle(true);
         }
     }
 
-    private List<Coordinates> convertNodeToCoordinate(List<? extends Node> path) {
+    private List<Coordinates> convertNodeToCoordinate(List<? extends com.group.pf.main.Node> path) {
         return path.stream()
                 .map(node -> new Coordinates(node.getX(), node.getY()))
                 .toList();

@@ -2,7 +2,6 @@ package com.group.pf;
 
 import com.group.pf.AStarAlgorithm.AStarPathfinder;
 import com.group.pf.AStarAlgorithm.AStarNode;
-import com.group.pf.BreadthFirstAlgorithm.BFSNode;
 import com.group.pf.BreadthFirstAlgorithm.BreadthFirstPathfinder;
 import com.group.pf.DTO.PathResult;
 import com.group.pf.DijkstraAlgorithm.DijkstraNode;
@@ -61,14 +60,14 @@ public class AlgoTest {
         GridFactory gridFactory = new GridFactory();
 
         // Set the start and end nodes
-        BFSNode startAStarNode = new BFSNode(0, 0);
-        BFSNode endAStarNode = new BFSNode(30, 30);
+        Node startAStarNode = new Node(0, 0);
+        Node endAStarNode = new Node(30, 30);
         startAStarNode.setStart(true);
         endAStarNode.setEnd(true);
 
         BreadthFirstPathfinder pathfinder = new BreadthFirstPathfinder(gridFactory);
-        List<BFSNode> path = pathfinder.findPath(startAStarNode, endAStarNode, null, 50, 50);
-        for (BFSNode node : path){
+        List<Node> path = pathfinder.findPath(startAStarNode, endAStarNode, null, 50, 50);
+        for (Node node : path){
             if (node!= null){
                 System.out.println("Node " + node.getX() + " " + node.getY());
             }

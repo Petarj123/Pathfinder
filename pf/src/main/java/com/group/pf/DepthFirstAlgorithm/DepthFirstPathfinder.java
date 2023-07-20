@@ -15,32 +15,32 @@ import java.util.*;
 public class DepthFirstPathfinder {
     private final GridFactory gridFactory;
 
-    public PathResult<DFSNode> findPath(DFSNode startDFSNode, DFSNode endDFSNode, List<DFSNode> obstacles, int height, int width) {
+    public PathResult<Node> findPath(Node startNode, Node endNode, List<Node> obstacles, int height, int width) {
 
-        Grid<DFSNode> grid = gridFactory.createGrid(width, height, DFSNode.class);
+        Grid<Node> grid = gridFactory.createGrid(width, height, Node.class);
 
         if (obstacles != null) {
-            for (DFSNode obstacle : obstacles) {
+            for (Node obstacle : obstacles) {
                 grid.setObstacle(obstacle.getX(), obstacle.getY(), true);
             }
         }
-        
-        Set<DFSNode> visited = new LinkedHashSet<>();
-        Map<DFSNode, DFSNode> parents = new HashMap<>();
-        Stack<DFSNode> stack = new Stack<>();
 
-        stack.push(startDFSNode);
+
+        Set<Node> visited = new LinkedHashSet<>();
+        Map<Node, Node> parents = new HashMap<>();
+        Stack<Node> stack = new Stack<>();
+
+        stack.push(startNode);
         while (!stack.isEmpty()) {
-            DFSNode currentDFSNode = stack.pop();
+            Node currentDFSNode = stack.pop();
             if (visited.contains(currentDFSNode)) continue;
 
             visited.add(currentDFSNode);
-            if (currentDFSNode.equals(endDFSNode)) {
-                return new PathResult<>(reconstructPath(parents, endDFSNode), new ArrayList<>(visited));
+            if (currentDFSNode.equals(endNode)) {
+                return new PathResult<>(reconstructPath(parents, endNode), new ArrayList<>(visited));
             }
 
-            for (Node neighborNode : currentDFSNode.getNeighbors(grid)) {
-                DFSNode neighbor = (DFSNode) neighborNode;
+            for (Node neighbor : currentDFSNode.getNeighbors(grid)) {
                 if (!visited.contains(neighbor) && !neighbor.isObstacle()) {
                     stack.push(neighbor);
                     parents.put(neighbor, currentDFSNode);
@@ -51,9 +51,9 @@ public class DepthFirstPathfinder {
         return new PathResult<>(Collections.emptyList(), new ArrayList<>(visited));
     }
 
-    private List<DFSNode> reconstructPath(Map<DFSNode, DFSNode> parents, DFSNode endDFSNode) {
-        List<DFSNode> path = new ArrayList<>();
-        DFSNode current = endDFSNode;
+    private List<Node> reconstructPath(Map<Node, Node> parents, Node endDFSNode) {
+        List<Node> path = new ArrayList<>();
+        Node current = endDFSNode;
 
         while (current != null) {
             path.add(current);
