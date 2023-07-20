@@ -24,8 +24,7 @@ public class DepthFirstPathfinder {
                 grid.setObstacle(obstacle.getX(), obstacle.getY(), true);
             }
         }
-
-        // Perform DFS
+        
         Set<DFSNode> visited = new LinkedHashSet<>();
         Map<DFSNode, DFSNode> parents = new HashMap<>();
         Stack<DFSNode> stack = new Stack<>();
