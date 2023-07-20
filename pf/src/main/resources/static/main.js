@@ -217,7 +217,7 @@ function visualize() {
           }
         });
         console.log('Visualization request successful');
-      }, visitedNodes.length * 10);  // This delay ensures that the path is shown only after all visited nodes are marked.
+      }, visitedNodes.length * 5);  // This delay ensures that the path is shown only after all visited nodes are marked.
     })
     .catch(function (error) {
       console.error('Visualization request failed', error);
@@ -261,7 +261,7 @@ function markVisitedNodes(visited) {
         node.style.backgroundColor = 'lightblue';
         node.setAttribute('data-isVisited', 'true');  // Add data-isVisited attribute
       }
-    }, 10 * index);
+    }, 5 * index);
   });
 }
 
