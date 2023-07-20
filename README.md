@@ -14,7 +14,7 @@ Create a start node by pressing Shift + MB1.
 
 Create an end node by pressing Ctrl + MB1.
 
-Choose your preferred pathfinding algorithm from the selection menu: Dijkstra's Algorithm, A* Search, Bidirectional Swarm, or Breadth-First Search.
+Choose your preferred pathfinding algorithm from the selection menu: Dijkstra's Algorithm, A* Search, Bidirectional Swarm, Breadth-First Search or Depth-First Search.
 
 Algorithms
 
