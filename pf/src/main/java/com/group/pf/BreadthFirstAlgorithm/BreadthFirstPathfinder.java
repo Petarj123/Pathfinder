@@ -18,7 +18,7 @@ public class BreadthFirstPathfinder {
 
     public PathResult<BFSNode> findPath(BFSNode startBFSNode, BFSNode endBFSNode, List<BFSNode> obstacles, int height, int width) {
         Queue<BFSNode> queue = new LinkedList<>();
-        Set<BFSNode> visited = new HashSet<>();
+        Set<BFSNode> visited = new LinkedHashSet<>();
         Map<BFSNode, BFSNode> parents = new HashMap<>();
         Grid<BFSNode> grid = gridFactory.createGrid(width, height, BFSNode.class);
 

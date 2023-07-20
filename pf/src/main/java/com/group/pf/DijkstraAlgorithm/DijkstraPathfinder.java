@@ -18,7 +18,7 @@ public class DijkstraPathfinder {
 
     public PathResult<DijkstraNode> findPath(DijkstraNode startDijkstraNode, DijkstraNode endDijkstraNode, List<DijkstraNode> obstacles, int height, int width) {
         PriorityQueue<DijkstraNode> queue = new PriorityQueue<>();
-        Set<DijkstraNode> visited = new HashSet<>();
+        Set<DijkstraNode> visited = new LinkedHashSet<>();
         Grid<DijkstraNode> grid = gridFactory.createGrid(width, height, DijkstraNode.class);
 
         // Set obstacles

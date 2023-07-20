@@ -20,8 +20,8 @@ public class BiDirectionalSwarmPathfinder {
         Grid<SwarmNode> grid = gridFactory.createGrid(width, height, SwarmNode.class);
         Queue<SwarmNode> forwardQueue = new LinkedList<>();
         Queue<SwarmNode> backwardQueue = new LinkedList<>();
-        Set<SwarmNode> forwardVisited = new HashSet<>();
-        Set<SwarmNode> backwardVisited = new HashSet<>();
+        Set<SwarmNode> forwardVisited = new LinkedHashSet<>();
+        Set<SwarmNode> backwardVisited = new LinkedHashSet<>();
         Map<SwarmNode, SwarmNode> forwardParents = new HashMap<>();
         Map<SwarmNode, SwarmNode> backwardParents = new HashMap<>();
 
@@ -36,7 +36,7 @@ public class BiDirectionalSwarmPathfinder {
         backwardQueue.offer(endSwarmNode);
         backwardVisited.add(endSwarmNode);
 
-        Set<SwarmNode> totalVisited = new HashSet<>(); // for storing all visited nodes
+        Set<SwarmNode> totalVisited = new LinkedHashSet<>(); // for storing all visited nodes
 
         while (!forwardQueue.isEmpty() && !backwardQueue.isEmpty()) {
             SwarmNode forwardCurrent = forwardQueue.poll();

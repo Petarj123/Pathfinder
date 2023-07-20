@@ -17,7 +17,7 @@ public class AStarPathfinder {
     public PathResult<AStarNode> findPath(AStarNode startAStarNode, AStarNode endAStarNode, List<AStarNode> obstacles, int height, int width) {
         Grid<AStarNode> grid = gridFactory.createGrid(width, height, AStarNode.class);
         PriorityQueue<AStarNode> openSet = new PriorityQueue<>(Comparator.comparingDouble(AStarNode::getFScore));
-        Set<AStarNode> closedSet = new HashSet<>();
+        Set<AStarNode> closedSet = new LinkedHashSet<>();
         List<AStarNode> visited = new ArrayList<>();
         if (obstacles != null) {
             for (AStarNode node : obstacles) {
