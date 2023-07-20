@@ -1,5 +1,6 @@
 package com.group.pf.AStarAlgorithm;
 
+import com.group.pf.DTO.PathResult;
 import com.group.pf.main.Grid;
 import com.group.pf.main.GridFactory;
 import com.group.pf.main.Node;
@@ -13,11 +14,11 @@ import java.util.*;
 public class AStarPathfinder {
     private final GridFactory gridFactory;
 
-    public List<AStarNode> findPath(AStarNode startAStarNode, AStarNode endAStarNode, List<AStarNode> obstacles, int height, int width) {
+    public PathResult<AStarNode> findPath(AStarNode startAStarNode, AStarNode endAStarNode, List<AStarNode> obstacles, int height, int width) {
         Grid<AStarNode> grid = gridFactory.createGrid(width, height, AStarNode.class);
         PriorityQueue<AStarNode> openSet = new PriorityQueue<>(Comparator.comparingDouble(AStarNode::getFScore));
         Set<AStarNode> closedSet = new HashSet<>();
-
+        List<AStarNode> visited = new ArrayList<>();
         if (obstacles != null) {
             for (AStarNode node : obstacles) {
                 grid.setObstacle(node.getX(), node.getY(), true);
@@ -30,8 +31,9 @@ public class AStarPathfinder {
 
         while (!openSet.isEmpty()) {
             AStarNode currentAStarNode = openSet.poll();
+            visited.add(currentAStarNode);
             if (currentAStarNode.equals(endAStarNode)) {
-                return reconstructPath(currentAStarNode);
+                return new PathResult<>(reconstructPath(currentAStarNode), visited);
             }
 
             closedSet.add(currentAStarNode);
@@ -56,7 +58,7 @@ public class AStarPathfinder {
                 }
             }
         }
-        return Collections.emptyList();
+        return new PathResult<>(Collections.emptyList(), visited);
     }
 
     private List<AStarNode> reconstructPath(AStarNode currentAStarNode) {

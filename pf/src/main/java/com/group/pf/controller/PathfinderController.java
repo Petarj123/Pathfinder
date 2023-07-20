@@ -4,9 +4,7 @@ import com.group.pf.AStarAlgorithm.AStarNode;
 import com.group.pf.AStarAlgorithm.AStarPathfinder;
 import com.group.pf.BreadthFirstAlgorithm.BFSNode;
 import com.group.pf.BreadthFirstAlgorithm.BreadthFirstPathfinder;
-import com.group.pf.DTO.Coordinates;
-import com.group.pf.DTO.MazeRequest;
-import com.group.pf.DTO.PathfinderRequest;
+import com.group.pf.DTO.*;
 import com.group.pf.DijkstraAlgorithm.DijkstraNode;
 import com.group.pf.DijkstraAlgorithm.DijkstraPathfinder;
 import com.group.pf.Swarm.BiDirectionalSwarmPathfinder;
@@ -49,15 +47,14 @@ public class PathfinderController {
     @PostMapping("/pathfinder/aStar")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<Coordinates> findPathAStar(@RequestBody PathfinderRequest requestBody) {
+    public PathfindingResult findPathAStar(@RequestBody PathfinderRequest requestBody) {
         List<Coordinates> startCoords = requestBody.start();
         List<Coordinates> endCoords = requestBody.end();
         List<Coordinates> obstacleCoords = requestBody.obstacles();
 
         Coordinates startCoord = startCoords.get(0);
         Coordinates endCoord = endCoords.get(0);
-        System.out.println(requestBody.height());
-        System.out.println(requestBody.width());
+
         AStarNode startNode = new AStarNode(startCoord.x(), startCoord.y());
         startNode.setStart(true);
         AStarNode endNode = new AStarNode(endCoord.x(), endCoord.y());
@@ -67,15 +64,16 @@ public class PathfinderController {
                 .toList();
         setObstacles(obstacleNodes);
 
-        List<AStarNode> path = aStarPathfinder.findPath(startNode, endNode, obstacleNodes, requestBody.height(), requestBody.width());
-        System.out.println(path);
-        return convertNodeToCoordinate(path);
+        PathResult<AStarNode> pathResult = aStarPathfinder.findPath(startNode, endNode, obstacleNodes, requestBody.height(), requestBody.width());
+        List<Coordinates> pathCoordinates = convertNodeToCoordinate(pathResult.path());
+        List<Coordinates> visitedCoordinates = convertNodeToCoordinate(pathResult.visited());
+        return new PathfindingResult(pathCoordinates, visitedCoordinates);
     }
 
     @PostMapping("/pathfinder/dijkstra")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<Coordinates> findPathDijkstra(@RequestBody PathfinderRequest requestBody) {
+    public PathfindingResult findPathDijkstra(@RequestBody PathfinderRequest requestBody) {
         List<Coordinates> startCoords = requestBody.start();
         List<Coordinates> endCoords = requestBody.end();
         List<Coordinates> obstacleCoords = requestBody.obstacles();
@@ -92,17 +90,20 @@ public class PathfinderController {
                 .map(coordinates -> new DijkstraNode(coordinates.x(), coordinates.y()))
                 .toList();
         setObstacles(obstacleNodes);
-        List<DijkstraNode> path = dijkstraPathfinder.findPath(startNode, endNode, obstacleNodes, requestBody.height(), requestBody.width());
 
-        // Extract the coordinates from the path nodes
-        System.out.println(path);
-        return convertNodeToCoordinate(path);
+        PathResult<DijkstraNode> pathResult = dijkstraPathfinder.findPath(startNode, endNode, obstacleNodes, requestBody.height(), requestBody.width());
+
+        // Extract the coordinates from the path nodes and visited nodes
+        List<Coordinates> path = convertNodeToCoordinate(pathResult.path());
+        List<Coordinates> visited = convertNodeToCoordinate(pathResult.visited());
+
+        return new PathfindingResult(path, visited);
     }
 
     @PostMapping("/pathfinder/breadthFirst")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<Coordinates> findPathBreadthFirst(@RequestBody PathfinderRequest requestBody) {
+    public PathfindingResult findPathBreadthFirst(@RequestBody PathfinderRequest requestBody) {
         List<Coordinates> startCoords = requestBody.start();
         List<Coordinates> endCoords = requestBody.end();
         List<Coordinates> obstacleCoords = requestBody.obstacles();
@@ -118,17 +119,19 @@ public class PathfinderController {
         List<BFSNode> obstacleNodes = obstacleCoords.stream()
                 .map(coordinates -> new BFSNode(coordinates.x(), coordinates.y()))
                 .toList();
-        setObstacles(obstacleNodes);
 
-        List<BFSNode> path = breadthFirstPathfinder.findPath(startNode, endNode, obstacleNodes, requestBody.height(), requestBody.width());
-        System.out.println(path);
-        return convertNodeToCoordinate(path);
+        PathResult<BFSNode> pathResult = breadthFirstPathfinder.findPath(startNode, endNode, obstacleNodes, requestBody.height(), requestBody.width());
+
+        List<Coordinates> pathCoords = convertNodeToCoordinate(pathResult.path());
+        List<Coordinates> visitedCoords = convertNodeToCoordinate(pathResult.visited());
+
+        return new PathfindingResult(pathCoords, visitedCoords);
     }
 
     @PostMapping("/pathfinder/biDirectionalSwarm")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<Coordinates> findPathBiDirectionalSwarm(@RequestBody PathfinderRequest requestBody) {
+    public PathfindingResult findPathBiDirectionalSwarm(@RequestBody PathfinderRequest requestBody) {
         List<Coordinates> startCoords = requestBody.start();
         List<Coordinates> endCoords = requestBody.end();
         List<Coordinates> obstacleCoords = requestBody.obstacles();
@@ -146,8 +149,13 @@ public class PathfinderController {
                 .toList();
         setObstacles(obstacleNodes);
 
-        List<SwarmNode> path = biDirectionalSwarmPathfinder.findPath(startNode, endNode, obstacleNodes, requestBody.height(), requestBody.width());
-        return convertNodeToCoordinate(path);
+        PathResult<SwarmNode> pathResult = biDirectionalSwarmPathfinder.findPath(startNode, endNode, obstacleNodes, requestBody.height(), requestBody.width());
+
+        // Extract the coordinates from the path nodes and visited nodes
+        List<Coordinates> path = convertNodeToCoordinate(pathResult.path());
+        List<Coordinates> visited = convertNodeToCoordinate(pathResult.visited());
+
+        return new PathfindingResult(path, visited);
     }
     // TODO FIX THIS
     @PostMapping("/pathfinder/maze")

@@ -4,6 +4,7 @@ import com.group.pf.AStarAlgorithm.AStarPathfinder;
 import com.group.pf.AStarAlgorithm.AStarNode;
 import com.group.pf.BreadthFirstAlgorithm.BFSNode;
 import com.group.pf.BreadthFirstAlgorithm.BreadthFirstPathfinder;
+import com.group.pf.DTO.PathResult;
 import com.group.pf.DijkstraAlgorithm.DijkstraNode;
 import com.group.pf.DijkstraAlgorithm.DijkstraPathfinder;
 import com.group.pf.main.GridFactory;
@@ -28,7 +29,7 @@ public class AlgoTest {
         AStarPathfinder pathfinder = new AStarPathfinder(gridFactory);
 
         // Find the path
-        List<AStarNode> path = pathfinder.findPath(startAStarNode, endAStarNode, null, 50, 50);
+        PathResult<AStarNode> path = pathfinder.findPath(startAStarNode, endAStarNode, null, 50, 50);
 
         for (AStarNode node : path) {
             System.out.println("Node " + node.getX() + " " + node.getY());

@@ -168,11 +168,10 @@ var pathNodes = [];
 
 function visualize() {
   clearPath();
-  // Get the selected node coordinates map
   var nodeMap = getSelectedNodeCoordinates();
   var algorithm = document.getElementById('algorithm-selector').value;
   console.log('Algorithm:', algorithm);
-  // Create the request payload
+
   var payload = {
     start: nodeMap.get('start') || [],
     end: nodeMap.get('end') || [],
@@ -181,10 +180,8 @@ function visualize() {
     width: numOfCols,
   };
 
-  // Convert the payload to a JSON string
   var jsonData = JSON.stringify(payload);
 
-  // Send the data to the backend using fetch
   fetch('http://localhost:8080/pathfinder/' + algorithm, {
     method: 'POST',
     headers: {
@@ -194,64 +191,46 @@ function visualize() {
   })
     .then(function (response) {
       if (response.ok) {
-        // Request successful, parse the response
         return response.json();
       } else {
-        // Request failed, handle the error
         throw new Error('Visualization request failed');
       }
     })
-    .then(function (path) {
+    .then(function (result) {
+      var visitedNodes = result.visited;
+      var pathNodes = result.path;
 
-      // Store the new path nodes
-      pathNodes = path.map(function (coord) {
-        var node = document.querySelector(
-          '[data-x="' + coord.x + '"][data-y="' + coord.y + '"]'
-        );
-        createPathNode(node, coord.x, coord.y);
-        return node;
-      });
+      markVisitedNodes(visitedNodes);
 
-      console.log('Visualization request successful');
+      setTimeout(function() {
+        pathNodes.forEach(function (coord) {
+          var node = document.querySelector(
+            '[data-x="' + coord.x + '"][data-y="' + coord.y + '"]'
+          );
+
+          if (
+            node.getAttribute('data-isStart') !== 'true' &&
+            node.getAttribute('data-isEnd') !== 'true' &&
+            node.getAttribute('data-isObstacle') !== 'true'
+          ) {
+            createPathNode(node, coord.x, coord.y);
+          }
+        });
+        console.log('Visualization request successful');
+      }, visitedNodes.length * 10);  // This delay ensures that the path is shown only after all visited nodes are marked.
     })
     .catch(function (error) {
-      // Request or parsing failed, handle the error
       console.error('Visualization request failed', error);
     });
 }
 
 function clearGrid() {
-  // Reset start nodes
-  var startNodes = document.getElementsByClassName('start');
-  for (var i = 0; i < startNodes.length; i++) {
-    var node = startNodes[i];
-    node.style.backgroundColor = 'white';
-    node.setAttribute('data-isStart', 'false');
-  }
-   // Reset end nodes
-  var endNodes = document.getElementsByClassName('end');
-  for (var i = 0; i < endNodes.length; i++) {
-    var node = endNodes[i];
-    node.style.backgroundColor = 'white';
-    node.setAttribute('data-isEnd', 'false');
-  }
-   // Reset obstacle nodes
-  var obstacleNodes = document.getElementsByClassName('obstacle');
-  for (var i = 0; i < obstacleNodes.length; i++) {
-    var node = obstacleNodes[i];
-    node.style.backgroundColor = 'white';
-    node.setAttribute('data-isObstacle', 'false');
-  }
-  var pathNode = document.getElementsByClassName('path');
-  for (var i = 0; i < pathNode.length; i++) {
-    var node = pathNode[i];
-    node.style.backgroundColor = 'white';
-    node.setAttribute('data-isPath', 'false');
-  }
+  location.reload();
 }
 
 function clearPath() {
-  var pathNodes = document.getElementsByClassName('path');
+
+  var pathNodes = document.querySelectorAll('[data-isPath="true"], [data-isVisited="true"]');
 
   for (var i = 0; i < pathNodes.length; i++) {
     var node = pathNodes[i];
@@ -260,11 +239,30 @@ function clearPath() {
     var isObstacle = node.getAttribute('data-isObstacle');
 
     if (isStart !== 'true' && isEnd !== 'true' && isObstacle !== 'true') {
-      // Reset the background color and data attribute only for non-start, non-end, and non-obstacle nodes
       node.style.backgroundColor = 'white';
       node.setAttribute('data-isPath', 'false');
+      node.setAttribute('data-isVisited', 'false');
     }
   }
+}
+
+function markVisitedNodes(visited) {
+  visited.forEach(function (coord, index) {
+    setTimeout(function () {
+      var node = document.querySelector(
+        '[data-x="' + coord.x + '"][data-y="' + coord.y + '"]'
+      );
+
+      if (
+        node.getAttribute('data-isStart') !== 'true' &&
+        node.getAttribute('data-isEnd') !== 'true' &&
+        node.getAttribute('data-isObstacle') !== 'true'
+      ) {
+        node.style.backgroundColor = 'lightblue';
+        node.setAttribute('data-isVisited', 'true');  // Add data-isVisited attribute
+      }
+    }, 10 * index);
+  });
 }
 
 

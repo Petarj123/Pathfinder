@@ -1,5 +1,6 @@
 package com.group.pf.DijkstraAlgorithm;
 
+import com.group.pf.DTO.PathResult;
 import com.group.pf.main.Grid;
 import com.group.pf.main.GridFactory;
 import com.group.pf.main.Node;
@@ -15,7 +16,7 @@ import java.util.*;
 public class DijkstraPathfinder {
     private final GridFactory gridFactory;
 
-    public List<DijkstraNode> findPath(DijkstraNode startDijkstraNode, DijkstraNode endDijkstraNode, List<DijkstraNode> obstacles, int height, int width) {
+    public PathResult<DijkstraNode> findPath(DijkstraNode startDijkstraNode, DijkstraNode endDijkstraNode, List<DijkstraNode> obstacles, int height, int width) {
         PriorityQueue<DijkstraNode> queue = new PriorityQueue<>();
         Set<DijkstraNode> visited = new HashSet<>();
         Grid<DijkstraNode> grid = gridFactory.createGrid(width, height, DijkstraNode.class);
@@ -34,16 +35,13 @@ public class DijkstraPathfinder {
             DijkstraNode currentDijkstraNode = queue.poll();
 
             if (currentDijkstraNode.equals(endDijkstraNode)) {
-                return reconstructPath(currentDijkstraNode); // Return the reconstructed path
+                return new PathResult<>(reconstructPath(currentDijkstraNode), new ArrayList<>(visited));
             }
 
             visited.add(currentDijkstraNode);
 
             for (Node neighborNode : currentDijkstraNode.getNeighbors(grid)) {
                 DijkstraNode neighbor = (DijkstraNode) neighborNode;
-                if (neighbor.isObstacle()) {
-                    System.out.println(neighbor);
-                }
                 if (!visited.contains(neighbor) && !neighbor.isObstacle()) {
                     int distance = currentDijkstraNode.getDistance() + 1;
 
@@ -56,7 +54,7 @@ public class DijkstraPathfinder {
             }
         }
 
-        return Collections.emptyList(); // Return an empty list if no path is found
+        return new PathResult<>(Collections.emptyList(), new ArrayList<>(visited));
     }
 
 

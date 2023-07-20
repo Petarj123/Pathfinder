@@ -1,5 +1,6 @@
 package com.group.pf.BreadthFirstAlgorithm;
 
+import com.group.pf.DTO.PathResult;
 import com.group.pf.main.Grid;
 import com.group.pf.main.GridFactory;
 import com.group.pf.main.Node;
@@ -15,7 +16,7 @@ import java.util.*;
 public class BreadthFirstPathfinder {
     private final GridFactory gridFactory;
 
-    public List<BFSNode> findPath(BFSNode startBFSNode, BFSNode endBFSNode, List<BFSNode> obstacles, int height, int width) {
+    public PathResult<BFSNode> findPath(BFSNode startBFSNode, BFSNode endBFSNode, List<BFSNode> obstacles, int height, int width) {
         Queue<BFSNode> queue = new LinkedList<>();
         Set<BFSNode> visited = new HashSet<>();
         Map<BFSNode, BFSNode> parents = new HashMap<>();
@@ -32,11 +33,8 @@ public class BreadthFirstPathfinder {
 
         while (!queue.isEmpty()) {
             BFSNode currentBFSNode = queue.poll();
-            if (currentBFSNode.isObstacle()) {
-                System.out.printf("Node %s %s", currentBFSNode.getX(), currentBFSNode.getY());
-            }
             if (currentBFSNode.equals(endBFSNode)) {
-                return reconstructPath(parents, endBFSNode);
+                return new PathResult<>(reconstructPath(parents, endBFSNode), new ArrayList<>(visited));
             }
 
             for (Node neighborNode : currentBFSNode.getNeighbors(grid)) {
@@ -44,11 +42,12 @@ public class BreadthFirstPathfinder {
                 if (!visited.contains(neighbor) && !neighbor.isObstacle()) {
                     queue.offer(neighbor);
                     visited.add(neighbor);
-                    parents.put(neighbor, currentBFSNode); // Add to parents only if it's not an obstacle
+                    parents.put(neighbor, currentBFSNode);
                 }
             }
         }
-        return Collections.emptyList();
+
+        return new PathResult<>(Collections.emptyList(), new ArrayList<>(visited));
     }
 
     private List<BFSNode> reconstructPath(Map<BFSNode, BFSNode> parents, BFSNode endBFSNode) {
