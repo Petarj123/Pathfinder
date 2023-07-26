@@ -2,7 +2,7 @@
 
 Description
 
-Pathfinder Visualizer is a tool for visualizing and understanding various pathfinding algorithms. The application allows users to create their own grid-based maps and run different algorithms on them. Current algorithms supported are Dijkstra's Algorithm, A* Search, Bidirectional Swarm, and Breadth-First Search.
+Pathfinder Visualizer is a tool for visualizing and understanding various pathfinding algorithms. The application allows users to create their own grid-based maps and run different algorithms on them. Current algorithms supported are Dijkstra's Algorithm, A* Search, Bidirectional Swarm, Depth-First Search, and Breadth-First Search.
 
 Usage
 
