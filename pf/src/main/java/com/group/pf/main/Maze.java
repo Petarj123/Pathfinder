@@ -15,27 +15,33 @@ public class Maze {
         Grid<Node> grid = gridFactory.createGrid(width, height, Node.class);
         List<Node> stack = new ArrayList<>();
         Set<Node> visitedNodes = new HashSet<>();
+
         // Initialize the grid with walls
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 grid.getNode(x, y).setObstacle(true);
             }
         }
-        // Recursive Backtracking Algorithm
-        Node current = grid.getNode(0, 0);
+
+        // Start at a random initial node
+        Node current = grid.getNode(new Random().nextInt(width), new Random().nextInt(height));
+        current.setObstacle(false);
         stack.add(current);
+
         while (!stack.isEmpty()) {
             visitedNodes.add(current);
             List<Node> unvisitedNeighbors = getUnvisitedNeighbors(current, grid, visitedNodes);
             if (!unvisitedNeighbors.isEmpty()) {
                 Node next = unvisitedNeighbors.get(new Random().nextInt(unvisitedNeighbors.size()));
                 removeWallBetweenNodes(current, next, grid);
-                stack.add(next);
+                stack.add(current);
+                next.setObstacle(false);
                 current = next;
             } else {
                 current = stack.remove(stack.size() - 1);
             }
         }
+
         // Convert maze nodes to coordinates
         List<Coordinates> mazeCoordinates = new ArrayList<>();
         for (int x = 0; x < width; x++) {
@@ -49,7 +55,7 @@ public class Maze {
     }
 
     private List<Node> getUnvisitedNeighbors(Node node, Grid<Node> grid, Set<Node> visitedNodes) {
-        List<Node> neighbors = node.getNeighbors(grid);
+        List<Node> neighbors = node.getNeighborsMaze(grid);
         List<Node> unvisitedNeighbors = new ArrayList<>();
 
         for (Node neighbor : neighbors) {
@@ -57,22 +63,24 @@ public class Maze {
                 unvisitedNeighbors.add(neighbor);
             }
         }
-
         return unvisitedNeighbors;
     }
 
-    private void removeWallBetweenNodes(Node node1, Node node2, Grid<Node> grid) {
-        int x1 = node1.getX();
-        int y1 = node1.getY();
-        int x2 = node2.getX();
-        int y2 = node2.getY();
+    private void removeWallBetweenNodes(Node node1, Node node2, Grid<Node> nodeGrid) {
+        int dx = node2.getX() - node1.getX();
+        int dy = node2.getY() - node1.getY();
 
-        // Calculate the x and y coordinates of the wall node between node1 and node2
-        int wallX = (x1 + x2) / 2;
-        int wallY = (y1 + y2) / 2;
+        int x = node1.getX() + dx/2;
+        int y = node1.getY() + dy/2;
 
-        // Set the obstacle flag of the wall node to false
-        Node wallNode = grid.getNode(wallX, wallY);
-        wallNode.setObstacle(false);
+        node1.setObstacle(false);
+        node2.setObstacle(false);
+
+        // Get the wall node between node1 and node2 and set its obstacle flag to false
+        Node wallNode = nodeGrid.getNode(x, y);
+        if (wallNode != null) {
+            wallNode.setObstacle(false);
+        }
     }
 }
+

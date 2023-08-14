@@ -26,7 +26,7 @@ public class Node {
         this.previous = null;
     }
 
-    public List<Node> getNeighbors(Grid grid) {
+    public List<Node> getNeighbors(Grid<?> grid) {
         List<Node> neighbors = new ArrayList<>();
 
         int currentX = getX();
@@ -50,6 +50,34 @@ public class Node {
         // Check the right neighbor
         if (grid.isWithinBounds(currentX + 1, currentY)) {
             neighbors.add(grid.getNode(currentX + 1, currentY));
+        }
+
+        return neighbors;
+    }
+    public List<Node> getNeighborsMaze(Grid<?> grid) {
+        List<Node> neighbors = new ArrayList<>();
+
+        int currentX = getX();
+        int currentY = getY();
+
+        // Check the top neighbor (2 cells away)
+        if (grid.isWithinBounds(currentX, currentY - 2)) {
+            neighbors.add(grid.getNode(currentX, currentY - 2));
+        }
+
+        // Check the bottom neighbor (2 cells away)
+        if (grid.isWithinBounds(currentX, currentY + 2)) {
+            neighbors.add(grid.getNode(currentX, currentY + 2));
+        }
+
+        // Check the left neighbor (2 cells away)
+        if (grid.isWithinBounds(currentX - 2, currentY)) {
+            neighbors.add(grid.getNode(currentX - 2, currentY));
+        }
+
+        // Check the right neighbor (2 cells away)
+        if (grid.isWithinBounds(currentX + 2, currentY)) {
+            neighbors.add(grid.getNode(currentX + 2, currentY));
         }
 
         return neighbors;

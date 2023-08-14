@@ -280,9 +280,8 @@ function clearMaze(){
       node.setAttribute('data-isPath', 'false');
     }
 }
-// TODO: FIX THIS
+
 function generateMaze() {
-  clearGrid();
 
   var requestBody = {
     height: numOfRows,
